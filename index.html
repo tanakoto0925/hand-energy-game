@@ -3,247 +3,106 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hand Energy Blast</title>
+<title>HAND ENERGY BLAST</title>
 <style>
-html,body{margin:0;height:100%;background:#050816;color:#fff;font-family:system-ui,"Segoe UI",sans-serif;overflow:hidden}
-#wrap{position:relative;width:100vw;height:100vh}
-video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-video{transform:scaleX(-1)}
-#overlay{transform:scaleX(-1);pointer-events:none}
-#fx{pointer-events:none}
-#hud{position:absolute;z-index:5;left:18px;top:18px;right:18px;display:flex;justify-content:space-between;gap:10px}
-.panel{background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:12px 16px}
-#status{font-size:24px;font-weight:900}
-#sub{margin-top:5px;font-size:14px}
-#steps{display:flex;gap:7px}
-.step{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.12);font-size:13px}
-.step.on{background:white;color:#111;font-weight:900}
-.step.done{background:#30e5b7;color:#001b15;font-weight:900}
-#start{position:absolute;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);border:0;border-radius:18px;padding:20px 32px;font-size:26px;font-weight:900;cursor:pointer}
-#diag{position:absolute;z-index:11;left:50%;top:61%;transform:translateX(-50%);background:rgba(0,0,0,.72);border-radius:11px;padding:9px 13px;font-size:14px}
-#error{display:none;position:absolute;z-index:12;left:20px;right:20px;bottom:20px;background:#711919;border:1px solid #ff9090;border-radius:12px;padding:12px}
-#msg{position:absolute;z-index:7;left:50%;bottom:55px;transform:translateX(-50%);font-size:28px;font-weight:900;text-shadow:0 2px 12px #000}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,"Segoe UI","Noto Sans JP",sans-serif;overflow:hidden}
+#app{height:100vh;display:grid;grid-template-rows:60px 1fr 34px;background:radial-gradient(circle at 50% 35%,#10154a55,transparent 40%),#010207}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid #1478bb88;background:#000b}
+.logo{font-size:clamp(23px,3vw,38px);font-weight:1000;font-style:italic;text-shadow:0 0 8px #48a8ff,0 0 20px #225cff}
+.top{display:flex;gap:22px;align-items:center;font-weight:900}.top button{font-size:25px;background:0;border:0;color:#fff;cursor:pointer}
+main{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;padding:12px}
+.stage{position:relative;min-height:0;border:2px solid #38c8ff;border-radius:15px;overflow:hidden;background:#020611;box-shadow:0 0 25px #1f74ff55}
+video{display:none}canvas{position:absolute;inset:0;width:100%;height:100%}#fx{pointer-events:none}
+#start{position:absolute;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #77d5ff;border-radius:15px;padding:17px 29px;background:linear-gradient(#1678ff,#0640bd);color:#fff;font-size:24px;font-weight:1000;box-shadow:0 0 24px #006effaa;cursor:pointer}
+#diag{position:absolute;z-index:10;left:50%;top:61%;transform:translateX(-50%);padding:7px 11px;border-radius:9px;background:#000c;font-size:13px}
+#statusBox{position:absolute;z-index:6;left:17px;top:17px;background:#000c;border:1px solid #ff59f4;border-radius:10px;padding:10px 13px;max-width:310px}
+#status{font-size:clamp(16px,2vw,24px);font-weight:1000}#sub{margin-top:4px;font-size:13px;opacity:.9}
+#privacy{position:absolute;z-index:6;right:17px;bottom:17px;padding:8px 12px;border:1px solid #64ff8d;border-radius:10px;background:#000c;color:#baffc5;font-weight:900}
+#charge{display:none;position:absolute;z-index:7;left:50%;top:58%;transform:translate(-50%,-50%);font-size:clamp(30px,5vw,62px);font-weight:1000;text-shadow:0 0 8px #fff,0 0 18px #ff42ff,0 0 38px #6d43ff}
+#steps{position:absolute;z-index:6;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:6px}
+.step{padding:7px 10px;border-radius:999px;background:#000b;border:1px solid #ffffff33;font-size:12px}.step.on{background:#fff;color:#111;font-weight:1000}.step.done{background:#67ffbd;color:#001b11;font-weight:1000}
+.side{overflow:auto;border:1px solid #176eff;border-radius:15px;background:#020612dd;padding:14px}.side h2{margin:0 0 12px;color:#39c7ff}
+.opt{display:block;padding:11px;border:1px solid #ffffff22;border-radius:11px;margin-bottom:8px;cursor:pointer}.opt.active{border-color:#ff65f6;box-shadow:0 0 13px #ff43e955}.opt b{display:block}.opt small{opacity:.75;margin-left:23px}
+.note{margin-top:14px;border:1px solid #1688ff;border-radius:12px;padding:12px;font-size:13px;line-height:1.55}.note h3{margin:0 0 8px;color:#32baff}.note strong{color:#ffd843}
+footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#000;font-size:13px;color:#cad7e6}
+#error{display:none;position:fixed;z-index:30;left:16px;right:16px;bottom:42px;background:#701515;border:1px solid #ff9999;border-radius:10px;padding:10px}
+@media(max-width:900px){main{grid-template-columns:1fr}.side{display:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<div id="wrap">
-<video id="video" autoplay playsinline muted></video>
-<canvas id="overlay"></canvas>
-<canvas id="fx"></canvas>
-
-<div id="hud">
-  <div class="panel">
-    <div id="status">準備中</div>
-    <div id="sub">右手 → 左手 → 両手を引く → 両手を前へ！</div>
-  </div>
-  <div class="panel" id="steps">
-    <span class="step on">1 右手</span>
-    <span class="step">2 左手</span>
-    <span class="step">3 引く</span>
-    <span class="step">4 発射</span>
-  </div>
-</div>
-
-<button id="start">カメラを開始</button>
-<div id="diag">AIライブラリ確認中…</div>
-<div id="msg"></div>
+<div id="app">
+<header><div class="logo">HAND ENERGY BLAST</div><div class="top"><span id="score">スコア: 0</span><button id="sound">🔊</button></div></header>
+<main>
+  <section class="stage">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="view"></canvas><canvas id="fx"></canvas>
+    <div id="statusBox"><div id="status">準備中</div><div id="sub">右手 → 左手 → 両手を引く → 両手を前へ！</div></div>
+    <div id="privacy">🔒 顔・背景は強力モザイク</div>
+    <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
+    <div id="charge">チャージ中</div>
+    <div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 発射</span></div>
+  </section>
+  <aside class="side">
+    <h2>プライバシーエフェクト</h2>
+    <label class="opt active"><input type="radio" name="e" value="max" checked> <b>超強力モザイク（最大）</b><small>顔・背景を大きなブロックで隠します</small></label>
+    <label class="opt"><input type="radio" name="e" value="strong"> <b>強力モザイク</b><small>少し細かいモザイク</small></label>
+    <label class="opt"><input type="radio" name="e" value="dark"> <b>暗幕 + モザイク</b><small>さらに背景を暗くします</small></label>
+    <label class="opt"><input type="radio" name="e" value="sil"> <b>シルエット</b><small>手以外をほぼ黒くします</small></label>
+    <div class="note"><h3>🔐 プライバシーについて</h3><p><strong>このゲームコードには画像保存・録画・アップロード処理を入れていません。</strong></p><p>✓ カメラ映像はブラウザ内でリアルタイム処理します。<br>✓ GitHub Pagesに置くのはこのHTMLだけです。<br>✓ 手認識ライブラリはCDNから読み込みますが、このコードからカメラ画像をCDNへ送る処理はありません。</p></div>
+  </aside>
+</main>
+<footer>🔒 カメラ画像の保存・アップロード処理は実装していません。</footer>
 <div id="error"></div>
 </div>
-
 <script>
-const video=document.getElementById('video');
-const overlay=document.getElementById('overlay');
-const fx=document.getElementById('fx');
-const ctx=overlay.getContext('2d');
-const fctx=fx.getContext('2d');
-const startBtn=document.getElementById('start');
-const diag=document.getElementById('diag');
-const errorBox=document.getElementById('error');
-const statusEl=document.getElementById('status');
-const msgEl=document.getElementById('msg');
-const stepEls=[...document.querySelectorAll('.step')];
-
-let hands=null, state=0, stableSince=0, pulledSize=null, running=false, busy=false;
-
-function showError(msg){
-  errorBox.style.display='block';
-  errorBox.textContent=msg;
+const V=document.getElementById("video"),C=document.getElementById("view"),F=document.getElementById("fx");
+const c=C.getContext("2d"),f=F.getContext("2d"),L=document.createElement("canvas"),l=L.getContext("2d");
+const start=document.getElementById("start"),diag=document.getElementById("diag"),statusEl=document.getElementById("status"),charge=document.getElementById("charge"),err=document.getElementById("error"),steps=[...document.querySelectorAll(".step")];
+let hands,running=false,busy=false,last=null,state=0,stable=0,pulled=null,score=0,effect="max",audio=null,osc=null,gain=null,soundOn=true,blastBusy=false;
+const con=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+document.querySelectorAll('input[name="e"]').forEach(x=>x.onchange=()=>{effect=x.value;document.querySelectorAll(".opt").forEach(o=>o.classList.remove("active"));x.closest(".opt").classList.add("active")});
+function E(t){err.style.display="block";err.textContent=t}window.onerror=(m,s,l)=>E("JavaScriptエラー: "+m+" / 行 "+l);
+function resize(){const r=C.getBoundingClientRect(),d=devicePixelRatio||1;C.width=F.width=Math.max(1,Math.round(r.width*d));C.height=F.height=Math.max(1,Math.round(r.height*d))}addEventListener("resize",resize);
+function A(){if(!audio)audio=new (AudioContext||webkitAudioContext)();if(audio.state==="suspended")audio.resume()}
+document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊":"🔇";if(!soundOn)stopCharge()};
+function beep(fr=700,d=.1,v=.04){if(!soundOn)return;A();let o=audio.createOscillator(),g=audio.createGain();o.type="square";o.frequency.value=fr;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+d)}
+function startCharge(){if(!soundOn||osc)return;A();osc=audio.createOscillator();gain=audio.createGain();osc.type="sawtooth";osc.frequency.setValueAtTime(70,audio.currentTime);osc.frequency.linearRampToValueAtTime(150,audio.currentTime+1.4);gain.gain.value=.018;osc.connect(gain).connect(audio.destination);osc.start()}
+function stopCharge(){if(osc){try{gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.08);osc.stop(audio.currentTime+.1)}catch{}osc=null;gain=null}}
+function blastSound(){if(!soundOn)return;A();let o=audio.createOscillator(),g=audio.createGain();o.type="sawtooth";o.frequency.setValueAtTime(320,audio.currentTime);o.frequency.exponentialRampToValueAtTime(48,audio.currentTime+.9);g.gain.value=.09;g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.9);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+.92)}
+function d(a,b){return Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)}function ps(m){return(d(m[0],m[9])+d(m[5],m[17]))/2}
+function open(m){let n=0;for(const q of [[8,6],[12,10],[16,14],[20,18]])if(d(m[0],m[q[0]])>d(m[0],m[q[1]])*1.12)n++;return n>=3}
+function hold(ok,ms){let n=performance.now();if(!ok){stable=0;return false}if(!stable)stable=n;return n-stable>=ms}
+function hud(){let a=["① 右手のひらを見せてください","② 次に左手のひらを見せてください","③ 両手を見せたまま体の方へ引いてください","④ 両手をカメラへ一気に近づけてください！","⚡ ENERGY BLAST!!"];statusEl.textContent=a[state];steps.forEach((x,i)=>{x.classList.toggle("done",i<state);x.classList.toggle("on",i===state)});charge.style.display=state===3?"block":"none"}
+function adv(){state++;stable=0;hud();beep(650+state*120)}
+function pt(p){return{x:(1-p.x)*C.width,y:p.y*C.height}}
+function handData(r){return(r.multiHandLandmarks||[]).map((m,i)=>({m,label:r.multiHandedness?.[i]?.label||"",open:open(m),size:ps(m),center:m[9]})).filter(x=>x.open)}
+function draw(){
+ if(V.readyState<2)return;let W=C.width,H=C.height,block=effect==="strong"?18:effect==="sil"?70:34;
+ L.width=Math.max(10,Math.round(W/block));L.height=Math.max(7,Math.round(H/block));l.setTransform(1,0,0,1,0,0);l.clearRect(0,0,L.width,L.height);l.translate(L.width,0);l.scale(-1,1);l.drawImage(V,0,0,L.width,L.height);
+ c.clearRect(0,0,W,H);c.imageSmoothingEnabled=false;c.drawImage(L,0,0,W,H);c.imageSmoothingEnabled=true;
+ if(effect==="dark"){c.fillStyle="#0008";c.fillRect(0,0,W,H)}if(effect==="sil"){c.fillStyle="#000d";c.fillRect(0,0,W,H)}
+ if(last?.multiHandLandmarks)for(const m of last.multiHandLandmarks){
+   c.save();c.beginPath();
+   for(const [a,b] of con){let A=pt(m[a]),B=pt(m[b]),pad=Math.max(17,Math.min(W,H)*.027),dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy)||1,nx=-dy/len*pad,ny=dx/len*pad;c.moveTo(A.x+nx,A.y+ny);c.lineTo(B.x+nx,B.y+ny);c.lineTo(B.x-nx,B.y-ny);c.lineTo(A.x-nx,A.y-ny);c.closePath()}
+   for(const p of m){let P=pt(p),r=Math.max(20,Math.min(W,H)*.03);c.moveTo(P.x+r,P.y);c.arc(P.x,P.y,r,0,Math.PI*2)}c.clip();c.translate(W,0);c.scale(-1,1);c.drawImage(V,0,0,W,H);c.restore();
+   c.save();c.lineCap="round";c.shadowBlur=15;c.shadowColor="#ff7f30";c.strokeStyle="#ffd096";c.lineWidth=Math.max(3,Math.min(W,H)*.005);
+   for(const [a,b] of con){let A=pt(m[a]),B=pt(m[b]);c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke()}c.restore()
+ }
 }
-window.onerror=(msg,src,line,col,err)=>showError("JavaScriptエラー: "+msg+" / 行 "+line);
-
-function resize(){
-  const r=video.getBoundingClientRect();
-  overlay.width=fx.width=Math.max(1,Math.round(r.width*devicePixelRatio));
-  overlay.height=fx.height=Math.max(1,Math.round(r.height*devicePixelRatio));
+function logic(r){let a=handData(r),R=a.find(x=>x.label==="Right"),Le=a.find(x=>x.label==="Left");
+ if(state===0&&hold(!!R,420))adv();else if(state===1&&hold(!!Le,420))adv();else if(state===2){if(a.length>=2){let q=(a[0].size+a[1].size)/2;if(hold(q<.19,600)){pulled=q;adv();startCharge()}}else hold(false,1)}
+ else if(state===3){if(a.length>=2&&pulled){let q=(a[0].size+a[1].size)/2;if(hold(q/pulled>1.48,180)){state=4;hud();stopCharge();blastSound();score++;document.getElementById("score").textContent="スコア: "+score;blast(a)}}else hold(false,1)}
 }
-addEventListener('resize',resize);
-
-function updateHUD(){
-  const labels=[
-    "① 右手のひらを見せてください",
-    "② 次に左手のひらを見せてください",
-    "③ 両手を見せたまま体の方へ引いてください",
-    "④ 両手をカメラへ突き出してください！",
-    "発射成功！"
-  ];
-  statusEl.textContent=labels[state];
-  stepEls.forEach((e,i)=>{e.classList.toggle('done',i<state);e.classList.toggle('on',i===state);});
-}
-
-function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)}
-function palmSize(lm){return (dist(lm[0],lm[9])+dist(lm[5],lm[17]))/2}
-function isOpen(lm){
-  const pairs=[[8,6],[12,10],[16,14],[20,18]];
-  let n=0;
-  for(const [tip,pip] of pairs) if(dist(lm[0],lm[tip])>dist(lm[0],lm[pip])*1.12) n++;
-  return n>=3;
-}
-function sustain(ok,ms){
-  const now=performance.now();
-  if(!ok){stableSince=0;return false}
-  if(!stableSince)stableSince=now;
-  return now-stableSince>=ms;
-}
-function advance(){state++;stableSince=0;updateHUD()}
-
-const connections=[
-[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],
-[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],
-[13,17],[17,18],[18,19],[19,20],[0,17]
-];
-
-function draw(results){
-  ctx.clearRect(0,0,overlay.width,overlay.height);
-  ctx.lineWidth=3*devicePixelRatio;
-  ctx.strokeStyle='rgba(50,230,255,.9)';
-  ctx.fillStyle='white';
-  const sets=results.multiHandLandmarks||[];
-  for(const lm of sets){
-    ctx.beginPath();
-    for(const [a,b] of connections){
-      ctx.moveTo(lm[a].x*overlay.width,lm[a].y*overlay.height);
-      ctx.lineTo(lm[b].x*overlay.width,lm[b].y*overlay.height);
-    }
-    ctx.stroke();
-    for(const p of lm){
-      ctx.beginPath();ctx.arc(p.x*overlay.width,p.y*overlay.height,3.5*devicePixelRatio,0,Math.PI*2);ctx.fill();
-    }
-  }
-}
-
-function processGame(results){
-  const landmarks=results.multiHandLandmarks||[];
-  const handed=results.multiHandedness||[];
-  const arr=landmarks.map((lm,i)=>({
-    lm, label:handed[i]?.label||"", open:isOpen(lm), size:palmSize(lm), center:lm[9]
-  })).filter(h=>h.open);
-
-  const right=arr.find(h=>h.label==="Right");
-  const left=arr.find(h=>h.label==="Left");
-
-  if(state===0 && sustain(!!right,450)){msgEl.textContent="右手 OK！";advance()}
-  else if(state===1 && sustain(!!left,450)){msgEl.textContent="左手 OK！";advance()}
-  else if(state===2){
-    if(arr.length>=2){
-      const avg=(arr[0].size+arr[1].size)/2;
-      if(sustain(avg<0.19,650)){pulledSize=avg;msgEl.textContent="チャージ！そのまま前へ！";advance()}
-    }else sustain(false,1);
-  }else if(state===3){
-    if(arr.length>=2 && pulledSize){
-      const avg=(arr[0].size+arr[1].size)/2;
-      const ratio=avg/pulledSize;
-      msgEl.textContent=ratio>1.2?"もっと前へ！":"両手をカメラへ！";
-      if(sustain(ratio>1.5,220)){
-        state=4;updateHUD();msgEl.textContent="ENERGY BLAST!";
-        blast(arr);
-      }
-    }else sustain(false,1);
-  }
-}
-
-function blast(arr){
-  const pts=arr.slice(0,2).map(h=>({x:(1-h.center.x)*fx.width,y:h.center.y*fx.height}));
-  const o=pts.length===2?{x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2}:{x:fx.width/2,y:fx.height/2};
-  const t0=performance.now();
-  function frame(now){
-    const t=(now-t0)/1000;
-    fctx.clearRect(0,0,fx.width,fx.height);
-    const p=Math.min(1,t/.65), r=(50+700*p)*devicePixelRatio;
-    const g=fctx.createRadialGradient(o.x,o.y,0,o.x,o.y,r);
-    g.addColorStop(0,'rgba(255,255,255,1)');
-    g.addColorStop(.15,'rgba(100,245,255,.95)');
-    g.addColorStop(.45,'rgba(50,160,255,.45)');
-    g.addColorStop(1,'rgba(30,60,255,0)');
-    fctx.fillStyle=g;fctx.beginPath();fctx.arc(o.x,o.y,r,0,Math.PI*2);fctx.fill();
-    if(t<1.5)requestAnimationFrame(frame);
-    else{fctx.clearRect(0,0,fx.width,fx.height);msgEl.textContent="成功！ページ更新で再挑戦"}
-  }
-  requestAnimationFrame(frame);
-}
-
-function onResults(results){
-  draw(results);
-  if(state<4)processGame(results);
-}
-
-async function loop(){
-  if(!running)return;
-  if(!busy && video.readyState>=2){
-    busy=true;
-    try{await hands.send({image:video})}
-    catch(e){showError("手認識処理エラー: "+e.message);running=false}
-    busy=false;
-  }
-  requestAnimationFrame(loop);
-}
-
-async function startGame(){
-  errorBox.style.display='none';
-  startBtn.disabled=true;
-  startBtn.textContent='起動中…';
-  try{
-    if(typeof Hands==="undefined") throw new Error("MediaPipe Hands が読み込まれていません。インターネット接続またはセキュリティ設定を確認してください。");
-    diag.textContent='AI初期化中…';
-    hands=new Hands({locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-    hands.setOptions({
-      maxNumHands:2,
-      modelComplexity:1,
-      minDetectionConfidence:.55,
-      minTrackingConfidence:.5
-    });
-    hands.onResults(onResults);
-
-    diag.textContent='カメラ許可を待っています…';
-    const stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false});
-    video.srcObject=stream;
-    await video.play();
-    resize();
-    diag.textContent='AI・カメラ OK';
-    setTimeout(()=>diag.style.display='none',1200);
-    startBtn.style.display='none';
-    running=true;
-    updateHUD();
-    loop();
-  }catch(e){
-    startBtn.disabled=false;
-    startBtn.textContent='カメラを開始';
-    diag.textContent='起動できません';
-    showError("起動エラー: "+(e.message||e));
-  }
-}
-
-startBtn.addEventListener('click',startGame);
-
-setTimeout(()=>{
-  if(typeof Hands!=="undefined"){
-    diag.textContent='AIライブラリ OK';
-  }else{
-    diag.textContent='AIを読み込めません。ネット接続をご確認ください。';
-  }
-},1200);
-
-updateHUD();
+function mid(a){if(a.length<2)return{x:F.width/2,y:F.height*.58};let p=pt(a[0].center),q=pt(a[1].center);return{x:(p.x+q.x)/2,y:(p.y+q.y)/2}}
+function lightning(x,y,r,al){f.save();f.globalAlpha=al;f.lineWidth=2*devicePixelRatio;f.shadowBlur=12;f.shadowColor="#7a55ff";for(let k=0;k<8;k++){let a=Math.random()*6.28,px=x,py=y;f.beginPath();f.moveTo(px,py);for(let s=1;s<6;s++){let rr=r*s/5,aa=a+(Math.random()-.5)*.28;px=x+Math.cos(aa)*rr;py=y+Math.sin(aa)*rr;f.lineTo(px,py)}f.strokeStyle=k%2?"#a36dff":"#54caff";f.stroke()}f.restore()}
+function chargeFx(){if(state!==3||!last)return;let a=handData(last);if(a.length<2)return;let q=mid(a),t=performance.now()/1000,r=(42+15*Math.sin(t*7))*devicePixelRatio,g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,r*2.3);g.addColorStop(0,"#fff");g.addColorStop(.18,"#ff6bff");g.addColorStop(.48,"#7048ffbb");g.addColorStop(1,"#2020ff00");f.save();f.globalCompositeOperation="lighter";f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,r*2.3,0,6.28);f.fill();lightning(q.x,q.y,r*3,.8);f.restore()}
+function blast(a){blastBusy=true;let q=mid(a),t0=performance.now();function go(n){let t=(n-t0)/1000;f.clearRect(0,0,F.width,F.height);f.save();f.globalCompositeOperation="lighter";if(t<.18){f.fillStyle=`rgba(255,255,255,${.8*(1-t/.18)})`;f.fillRect(0,0,F.width,F.height)}let p=Math.min(1,t/.7),R=55+Math.hypot(F.width,F.height)*.6*p,g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,R);g.addColorStop(0,"#fff");g.addColorStop(.12,"#ff65ff");g.addColorStop(.32,"#55bbffaa");g.addColorStop(1,"#2040ff00");f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,R,0,6.28);f.fill();lightning(q.x,q.y,Math.min(R,Math.max(F.width,F.height)*.75),Math.max(0,1-t/1.2));for(let i=0;i<45;i++){let aa=Math.random()*6.28,rr=R*(.15+Math.random()*.9);f.fillStyle=i%2?"#fff":"#ff69e8";f.beginPath();f.arc(q.x+Math.cos(aa)*rr,q.y+Math.sin(aa)*rr,(1+Math.random()*3)*devicePixelRatio,0,6.28);f.fill()}f.restore();if(t<1.5)requestAnimationFrame(go);else{f.clearRect(0,0,F.width,F.height);blastBusy=false;setTimeout(()=>{state=0;pulled=null;hud()},700)}}requestAnimationFrame(go)}
+function results(r){last=r;logic(r)}
+async function detect(){if(!running)return;if(!busy&&V.readyState>=2){busy=true;try{await hands.send({image:V})}catch(e){E("手認識エラー: "+e.message);running=false}busy=false}requestAnimationFrame(detect)}
+function render(){draw();if(!blastBusy){f.clearRect(0,0,F.width,F.height);chargeFx()}requestAnimationFrame(render)}
+start.onclick=async()=>{start.disabled=true;start.textContent="起動中…";try{A();if(typeof Hands==="undefined")throw Error("MediaPipe Handsを読み込めません");diag.textContent="AI初期化中…";hands=new Hands({locateFile:x=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${x}`});hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:.55,minTrackingConfidence:.5});hands.onResults(results);diag.textContent="カメラ許可を待っています…";let s=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false});V.srcObject=s;await V.play();resize();start.style.display="none";diag.textContent="AI・カメラ OK";setTimeout(()=>diag.style.display="none",900);running=true;detect();render()}catch(e){start.disabled=false;start.textContent="📷 カメラを開始";diag.textContent="起動できません";E("起動エラー: "+e.message)}};
+setTimeout(()=>diag.textContent=typeof Hands!=="undefined"?"AIライブラリ OK":"AIを読み込めません",900);hud();resize();
 </script>
 </body>
 </html>
