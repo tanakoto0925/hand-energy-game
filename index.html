@@ -3,67 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HAND ENERGY BLAST</title>
+<title>HAND ENERGY BLAST - みかんの仙人</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,"Segoe UI","Noto Sans JP",sans-serif;overflow:hidden}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;overflow:hidden}
 #app{height:100vh;display:grid;grid-template-rows:60px 1fr 34px;background:radial-gradient(circle at 50% 35%,#10154a55,transparent 40%),#010207}
-header{display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid #1478bb88;background:#000b}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid #1478bb88;background:#000c}
 .logo{font-size:clamp(23px,3vw,38px);font-weight:1000;font-style:italic;text-shadow:0 0 8px #48a8ff,0 0 20px #225cff}
-.top{display:flex;gap:22px;align-items:center;font-weight:900}.top button{font-size:25px;background:0;border:0;color:#fff;cursor:pointer}
+.top{display:flex;gap:22px;align-items:center;font-weight:900}
+.top button{font-size:25px;background:none;border:0;color:#fff;cursor:pointer}
 main{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;padding:12px}
 .stage{position:relative;min-height:0;border:2px solid #38c8ff;border-radius:15px;overflow:hidden;background:#020611;box-shadow:0 0 25px #1f74ff55}
-video{display:none}canvas{position:absolute;inset:0;width:100%;height:100%}#fx{pointer-events:none}
+video{display:none}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+#fx{pointer-events:none}
 #start{position:absolute;z-index:10;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #77d5ff;border-radius:15px;padding:17px 29px;background:linear-gradient(#1678ff,#0640bd);color:#fff;font-size:24px;font-weight:1000;box-shadow:0 0 24px #006effaa;cursor:pointer}
 #diag{position:absolute;z-index:10;left:50%;top:61%;transform:translateX(-50%);padding:7px 11px;border-radius:9px;background:#000c;font-size:13px}
-#statusBox{position:absolute;z-index:6;left:17px;top:17px;background:#000c;border:1px solid #ff59f4;border-radius:10px;padding:10px 13px;max-width:310px}
-#status{font-size:clamp(16px,2vw,24px);font-weight:1000}#sub{margin-top:4px;font-size:13px;opacity:.9}
+#statusBox{position:absolute;z-index:6;left:17px;top:17px;background:#000c;border:1px solid #ff59f4;border-radius:10px;padding:10px 13px;max-width:330px}
+#status{font-size:clamp(16px,2vw,24px);font-weight:1000}
+#sub{margin-top:4px;font-size:13px;opacity:.9}
 #privacy{position:absolute;z-index:6;right:17px;bottom:17px;padding:8px 12px;border:1px solid #64ff8d;border-radius:10px;background:#000c;color:#baffc5;font-weight:900}
-#charge{display:none;position:absolute;z-index:7;left:50%;top:58%;transform:translate(-50%,-50%);font-size:clamp(30px,5vw,62px);font-weight:1000;text-shadow:0 0 8px #fff,0 0 18px #ff42ff,0 0 38px #6d43ff}
-#steps{position:absolute;z-index:6;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:6px}
-.step{padding:7px 10px;border-radius:999px;background:#000b;border:1px solid #ffffff33;font-size:12px}.step.on{background:#fff;color:#111;font-weight:1000}.step.done{background:#67ffbd;color:#001b11;font-weight:1000}
-.side{overflow:auto;border:1px solid #176eff;border-radius:15px;background:#020612dd;padding:14px}.side h2{margin:0 0 12px;color:#39c7ff}
-.opt{display:block;padding:11px;border:1px solid #ffffff22;border-radius:11px;margin-bottom:8px;cursor:pointer}.opt.active{border-color:#ff65f6;box-shadow:0 0 13px #ff43e955}.opt b{display:block}.opt small{opacity:.75;margin-left:23px}
-.note{margin-top:14px;border:1px solid #1688ff;border-radius:12px;padding:12px;font-size:13px;line-height:1.55}.note h3{margin:0 0 8px;color:#32baff}.note strong{color:#ffd843}
-footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#000;font-size:13px;color:#cad7e6}
-#error{display:none;position:fixed;z-index:30;left:16px;right:16px;bottom:42px;background:#701515;border:1px solid #ff9999;border-radius:10px;padding:10px}
-@media(max-width:900px){main{grid-template-columns:1fr}.side{display:none}}
-
-/* --- みかんの仙人・チャージ演出 --- */
-#chargePanel{display:none;position:absolute;z-index:8;left:50%;bottom:58px;transform:translateX(-50%);
-width:min(560px,78%);padding:10px 14px;background:rgba(0,0,0,.78);border:1px solid #ffc13d;
-border-radius:14px;box-shadow:0 0 18px rgba(255,157,47,.4)}
+#chargeText{display:none;position:absolute;z-index:7;left:50%;top:57%;transform:translate(-50%,-50%);font-size:clamp(28px,4vw,56px);font-weight:1000;color:#fff;text-shadow:0 0 8px #fff,0 0 18px #ff42ff,0 0 38px #6d43ff}
+#chargePanel{display:none;position:absolute;z-index:8;left:50%;bottom:58px;transform:translateX(-50%);width:min(560px,78%);padding:10px 14px;background:rgba(0,0,0,.78);border:1px solid #ffc13d;border-radius:14px;box-shadow:0 0 18px rgba(255,157,47,.4)}
 #chargeTop{display:flex;justify-content:space-between;align-items:center;font-weight:1000;margin-bottom:7px}
 #chargeTime{font-size:22px;color:#ffd45f}
 #meter{height:17px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35)}
 #meterFill{height:100%;width:0%;background:linear-gradient(90deg,#5ccf63,#f6da45,#ff8b31,#ff4f33);transition:width .18s linear}
 #levelMarks{display:flex;justify-content:space-between;font-size:10px;opacity:.8;margin-top:4px}
-#sageWrap{position:absolute;z-index:12;right:-330px;top:95px;width:305px;display:flex;align-items:flex-start;gap:8px;opacity:0;
-transition:right .9s ease,opacity .6s ease;pointer-events:none}
+#steps{position:absolute;z-index:6;left:50%;top:15px;transform:translateX(-50%);display:flex;gap:6px}
+.step{padding:7px 10px;border-radius:999px;background:#000b;border:1px solid #ffffff33;font-size:12px}
+.step.on{background:#fff;color:#111;font-weight:1000}.step.done{background:#67ffbd;color:#001b11;font-weight:1000}
+#sageWrap{position:absolute;z-index:12;right:-330px;top:95px;width:305px;display:flex;align-items:flex-start;gap:8px;opacity:0;transition:right .9s ease,opacity .6s ease;pointer-events:none}
 #sageWrap.show{right:18px;opacity:1}
 #sageCloud{position:relative;width:105px;height:80px;flex:0 0 105px}
 .cloud{position:absolute;left:0;bottom:0;width:100px;height:40px;background:#fff;border-radius:40px;box-shadow:0 0 16px rgba(255,255,255,.45)}
 .cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
 .cloud:before{width:54px;height:54px;left:10px;bottom:10px}.cloud:after{width:48px;height:48px;right:6px;bottom:8px}
-#sageFace{position:absolute;z-index:2;left:30px;top:0;width:62px;height:62px;border-radius:50%;
-background:radial-gradient(circle at 35% 30%,#ffe16d 0 10%,#ffb21d 35%,#ef6f00 75%);
-border:3px solid #7d4200;box-shadow:0 0 16px #ffad27}
+#sageFace{position:absolute;z-index:2;left:30px;top:0;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe16d 0 10%,#ffb21d 35%,#ef6f00 75%);border:3px solid #7d4200;box-shadow:0 0 16px #ffad27}
 #sageFace:before{content:"🍃";position:absolute;left:21px;top:-24px;font-size:26px;transform:rotate(-18deg)}
 #sageFace:after{content:"〰";position:absolute;left:14px;bottom:-15px;font-size:31px;color:#fff;text-shadow:0 2px 2px #aaa}
-.eye{position:absolute;top:23px;width:7px;height:7px;background:#3b2300;border-radius:50%}
-.eye.l{left:16px}.eye.r{right:16px}
-#sageBubble{position:relative;max-width:190px;background:#fff;color:#3b2500;border:4px solid #f3a11c;border-radius:25px;
-padding:12px 13px;font-size:14px;font-weight:900;line-height:1.5;box-shadow:0 0 16px rgba(255,203,92,.45)}
+.eye{position:absolute;top:23px;width:7px;height:7px;background:#3b2300;border-radius:50%}.eye.l{left:16px}.eye.r{right:16px}
+#sageBubble{position:relative;max-width:190px;background:#fff;color:#3b2500;border:4px solid #f3a11c;border-radius:25px;padding:12px 13px;font-size:14px;font-weight:900;line-height:1.5;box-shadow:0 0 16px rgba(255,203,92,.45)}
 #sageBubble:before{content:"";position:absolute;left:-18px;top:32px;border-width:9px 18px 9px 0;border-style:solid;border-color:transparent #f3a11c transparent transparent}
 #sageBubble:after{content:"";position:absolute;left:-12px;top:35px;border-width:6px 13px 6px 0;border-style:solid;border-color:transparent #fff transparent transparent}
 #sageName{display:block;color:#df6900;font-size:12px;margin-bottom:3px}
-#shout{display:none;position:absolute;z-index:15;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-4deg);
-font-size:clamp(30px,6vw,78px);font-weight:1000;color:#fff7b0;text-align:center;line-height:1.06;
-text-shadow:0 0 7px #fff,0 0 18px #ff7a00,0 0 34px #ff2a00,4px 5px 0 #4f2b00;pointer-events:none}
+#shout{display:none;position:absolute;z-index:15;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-4deg);font-size:clamp(30px,6vw,78px);font-weight:1000;color:#fff7b0;text-align:center;line-height:1.06;text-shadow:0 0 7px #fff,0 0 18px #ff7a00,0 0 34px #ff2a00,4px 5px 0 #4f2b00;pointer-events:none}
 #shout.show{display:block;animation:popShout .65s ease-out both}
-@keyframes popShout{0%{transform:translate(-50%,-50%) scale(.15) rotate(-8deg);opacity:0}
-55%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}
-100%{transform:translate(-50%,-50%) scale(1) rotate(-4deg);opacity:1}}
-
+@keyframes popShout{0%{transform:translate(-50%,-50%) scale(.15) rotate(-8deg);opacity:0}55%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}100%{transform:translate(-50%,-50%) scale(1) rotate(-4deg);opacity:1}}
+.side{overflow:auto;border:1px solid #176eff;border-radius:15px;background:#020612dd;padding:14px}.side h2{margin:0 0 12px;color:#39c7ff}
+.opt{display:block;padding:11px;border:1px solid #ffffff22;border-radius:11px;margin-bottom:8px;cursor:pointer}.opt.active{border-color:#ff65f6;box-shadow:0 0 13px #ff43e955}.opt b{display:block}.opt small{opacity:.75;margin-left:23px}
+.note{margin-top:14px;border:1px solid #1688ff;border-radius:12px;padding:12px;font-size:13px;line-height:1.55}.note h3{margin:0 0 8px;color:#32baff}.note strong{color:#ffd843}
+footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#000;font-size:13px;color:#cad7e6}
+#error{display:none;position:absolute;z-index:20;left:50%;top:70%;transform:translateX(-50%);width:min(760px,88%);background:#721515;border:1px solid #ff9999;border-radius:12px;padding:12px 14px;font-weight:700;white-space:pre-wrap}
+@media(max-width:900px){main{grid-template-columns:1fr}.side{display:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
@@ -71,83 +63,377 @@ text-shadow:0 0 7px #fff,0 0 18px #ff7a00,0 0 34px #ff2a00,4px 5px 0 #4f2b00;poi
 <div id="app">
 <header><div class="logo">HAND ENERGY BLAST</div><div class="top"><span id="score">スコア: 0</span><button id="sound">🔊</button></div></header>
 <main>
-  <section class="stage">
-    <video id="video" autoplay playsinline muted></video>
-    <canvas id="view"></canvas><canvas id="fx"></canvas>
-    <div id="statusBox"><div id="status">準備中</div><div id="sub">右手 → 左手 → 両手を引く → 両手を前へ！</div></div>
-    <div id="privacy">🔒 顔・背景は強力モザイク</div>
-    <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
-    <div id="charge">チャージ中</div>
-    
-<div id="chargePanel">
-  <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span id="chargeTime">0.0 秒</span></div>
-  <div id="meter"><div id="meterFill"></div></div>
-  <div id="levelMarks"><span>0秒</span><span>2秒</span><span>4秒</span><span>6秒</span><span>8秒</span><span>10秒 MAX</span></div>
-</div>
-
-<div id="sageWrap">
-  <div id="sageCloud">
-    <div id="sageFace"><span class="eye l"></span><span class="eye r"></span></div>
-    <div class="cloud"></div>
+<section class="stage">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="view"></canvas><canvas id="fx"></canvas>
+  <div id="statusBox"><div id="status">準備中</div><div id="sub">右手 → 左手 → 両手を引く → 10秒チャージ → 放つ！</div></div>
+  <div id="privacy">🔒 顔・背景は強力モザイク</div>
+  <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
+  <div id="chargeText">チャージ中</div>
+  <div id="chargePanel">
+    <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span id="chargeTime">0.0 秒</span></div>
+    <div id="meter"><div id="meterFill"></div></div>
+    <div id="levelMarks"><span>0秒</span><span>2秒</span><span>4秒</span><span>6秒</span><span>8秒</span><span>10秒 MAX</span></div>
   </div>
-  <div id="sageBubble"><span id="sageName">🍊 みかんの仙人</span><span id="sageMessage">もっとパワーをためるのじゃ〜</span></div>
-</div>
+  <div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 チャージ</span><span class="step">5 放つ</span></div>
+  <div id="sageWrap">
+    <div id="sageCloud"><div id="sageFace"><span class="eye l"></span><span class="eye r"></span></div><div class="cloud"></div></div>
+    <div id="sageBubble"><span id="sageName">🍊 みかんの仙人</span><span id="sageMessage">もっとパワーをためるのじゃ〜</span></div>
+  </div>
+  <div id="shout">ぱっしゃぁーーーっ、<br>じゃーーーっ！！！</div>
+  <div id="error"></div>
+</section>
 
-<div id="shout">ぱっしゃぁーーーっ、<br>じゃーーーっ！！！</div>
-
-<div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 チャージ</span><span class="step">5 放つ</span></div>
-  </section>
-  <aside class="side">
-    <h2>プライバシーエフェクト</h2>
-    <label class="opt active"><input type="radio" name="e" value="max" checked> <b>超強力モザイク（最大）</b><small>顔・背景を大きなブロックで隠します</small></label>
-    <label class="opt"><input type="radio" name="e" value="strong"> <b>強力モザイク</b><small>少し細かいモザイク</small></label>
-    <label class="opt"><input type="radio" name="e" value="dark"> <b>暗幕 + モザイク</b><small>さらに背景を暗くします</small></label>
-    <label class="opt"><input type="radio" name="e" value="sil"> <b>シルエット</b><small>手以外をほぼ黒くします</small></label>
-    <div class="note"><h3>🔐 プライバシーについて</h3><p><strong>このゲームコードには画像保存・録画・アップロード処理を入れていません。</strong></p><p>✓ カメラ映像はブラウザ内でリアルタイム処理します。<br>✓ GitHub Pagesに置くのはこのHTMLだけです。<br>✓ 手認識ライブラリはCDNから読み込みますが、このコードからカメラ画像をCDNへ送る処理はありません。</p></div>
-  </aside>
+<aside class="side">
+  <h2>プライバシーエフェクト</h2>
+  <label class="opt active"><input type="radio" name="e" value="max" checked> <b>超強力モザイク（最大）</b><small>顔・背景を大きなブロックで隠します</small></label>
+  <label class="opt"><input type="radio" name="e" value="strong"> <b>強力モザイク</b><small>少し細かいモザイク</small></label>
+  <label class="opt"><input type="radio" name="e" value="dark"> <b>暗幕 + モザイク</b><small>さらに背景を暗くします</small></label>
+  <label class="opt"><input type="radio" name="e" value="sil"> <b>シルエット</b><small>手以外をほぼ黒くします</small></label>
+  <div class="note"><h3>🍊 新ルール</h3><p><strong>2秒ごとにエネルギー波が1段階ずつ強くなり、10秒で最大。</strong></p><p>4秒から「みかんの仙人」が雲に乗って登場。10秒で「今じゃ、放て！」。</p></div>
+  <div class="note"><h3>🔐 プライバシー</h3><p>画像保存・録画・アップロード処理は入れていません。</p></div>
+</aside>
 </main>
-<footer>🔒 カメラ画像の保存・アップロード処理は実装していません。</footer>
-<div id="error"></div>
+<footer>🍊 おててのなかに、おいしさが……うる、るん、るん、るん……</footer>
 </div>
+
 <script>
 const V=document.getElementById("video"),C=document.getElementById("view"),F=document.getElementById("fx");
 const c=C.getContext("2d"),f=F.getContext("2d"),L=document.createElement("canvas"),l=L.getContext("2d");
-const start=document.getElementById("start"),diag=document.getElementById("diag"),statusEl=document.getElementById("status"),charge=document.getElementById("charge"),err=document.getElementById("error"),steps=[...document.querySelectorAll(".step")];
-let hands,running=false,busy=false,last=null,state=0,stable=0,pulled=null,score=0,effect="max",audio=null,osc=null,gain=null,soundOn=true,blastBusy=false;
+const start=document.getElementById("start"),diag=document.getElementById("diag"),statusEl=document.getElementById("status"),
+chargeText=document.getElementById("chargeText"),chargePanel=document.getElementById("chargePanel"),chargeTimeEl=document.getElementById("chargeTime"),
+meterFill=document.getElementById("meterFill"),err=document.getElementById("error"),steps=[...document.querySelectorAll(".step")],
+sageWrap=document.getElementById("sageWrap"),sageMessage=document.getElementById("sageMessage"),shout=document.getElementById("shout");
+
+let hands=null,running=false,busy=false,last=null,state=0,stable=0,pulled=null,score=0,effect="max";
+let audio=null,osc=null,gain=null,soundOn=true,blastBusy=false;
+let chargeStart=0,chargeSeconds=0,chargeLevel=0,sageStage=-1,maxReady=false;
+
 const con=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
-document.querySelectorAll('input[name="e"]').forEach(x=>x.onchange=()=>{effect=x.value;document.querySelectorAll(".opt").forEach(o=>o.classList.remove("active"));x.closest(".opt").classList.add("active")});
-function E(t){err.style.display="block";err.textContent=t}window.onerror=(m,s,l)=>E("JavaScriptエラー: "+m+" / 行 "+l);
-function resize(){const r=C.getBoundingClientRect(),d=devicePixelRatio||1;C.width=F.width=Math.max(1,Math.round(r.width*d));C.height=F.height=Math.max(1,Math.round(r.height*d))}addEventListener("resize",resize);
-function A(){if(!audio)audio=new (AudioContext||webkitAudioContext)();if(audio.state==="suspended")audio.resume()}
-document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊":"🔇";if(!soundOn)stopCharge()};
-function beep(fr=700,d=.1,v=.04){if(!soundOn)return;A();let o=audio.createOscillator(),g=audio.createGain();o.type="square";o.frequency.value=fr;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+d)}
-function startCharge(){if(!soundOn||osc)return;A();osc=audio.createOscillator();gain=audio.createGain();osc.type="sawtooth";osc.frequency.setValueAtTime(70,audio.currentTime);osc.frequency.linearRampToValueAtTime(150,audio.currentTime+1.4);gain.gain.value=.018;osc.connect(gain).connect(audio.destination);osc.start()}
-function stopCharge(){if(osc){try{gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.08);osc.stop(audio.currentTime+.1)}catch{}osc=null;gain=null}}
+
+function showError(text){
+  err.style.display="block";
+  err.textContent=text;
+}
+function clearError(){err.style.display="none";err.textContent=""}
+window.addEventListener("error",e=>showError("JavaScriptエラー: "+e.message));
+window.addEventListener("unhandledrejection",e=>showError("処理エラー: "+(e.reason?.message||e.reason||"不明")));
+
+document.querySelectorAll('input[name="e"]').forEach(x=>x.onchange=()=>{
+  effect=x.value;
+  document.querySelectorAll(".opt").forEach(o=>o.classList.remove("active"));
+  x.closest(".opt").classList.add("active");
+});
+
+function resize(){
+  const r=C.getBoundingClientRect(),d=devicePixelRatio||1;
+  C.width=F.width=Math.max(1,Math.round(r.width*d));
+  C.height=F.height=Math.max(1,Math.round(r.height*d));
+}
+addEventListener("resize",resize);
+
+function initAudio(){
+  if(!soundOn)return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    if(!audio)audio=new AC();
+    if(audio.state==="suspended")audio.resume();
+  }catch(e){}
+}
+document.getElementById("sound").onclick=()=>{
+  soundOn=!soundOn;
+  document.getElementById("sound").textContent=soundOn?"🔊":"🔇";
+  if(!soundOn)stopChargeSound();
+};
+
+function beep(fr=700,d=.1,v=.04,type="square"){
+  if(!soundOn)return;
+  initAudio(); if(!audio)return;
+  const o=audio.createOscillator(),g=audio.createGain();
+  o.type=type;o.frequency.value=fr;g.gain.value=v;
+  g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);
+  o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+d);
+}
+function startChargeSound(){
+  if(!soundOn||osc)return;
+  initAudio(); if(!audio)return;
+  osc=audio.createOscillator();gain=audio.createGain();
+  osc.type="sine";osc.frequency.setValueAtTime(120,audio.currentTime);osc.frequency.linearRampToValueAtTime(250,audio.currentTime+10);
+  gain.gain.value=.016;osc.connect(gain).connect(audio.destination);osc.start();
+}
+function stopChargeSound(){
+  if(osc&&audio){
+    try{gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.08);osc.stop(audio.currentTime+.1)}catch(e){}
+  }
+  osc=null;gain=null;
+}
 function blastSound(power=1){
   if(!soundOn)return;
-  initAudio();
-  const now=audioCtx.currentTime;
-  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-  o.type="sawtooth";
-  o.frequency.setValueAtTime(260+power*180,now);
-  o.frequency.exponentialRampToValueAtTime(50,now+.75+power*.25);
-  g.gain.setValueAtTime(.055+.04*power,now);
-  g.gain.exponentialRampToValueAtTime(.0001,now+.85+power*.25);
-  o.connect(g).connect(audioCtx.destination);o.start(now);o.stop(now+1.2);
+  initAudio(); if(!audio)return;
+  const now=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();
+  o.type="sawtooth";o.frequency.setValueAtTime(270+power*180,now);o.frequency.exponentialRampToValueAtTime(50,now+.8+power*.2);
+  g.gain.value=.055+.035*power;g.gain.exponentialRampToValueAtTime(.0001,now+.9+power*.2);
+  o.connect(g).connect(audio.destination);o.start();o.stop(now+1.15);
 }
-function logic(r){let a=handData(r),R=a.find(x=>x.label==="Right"),Le=a.find(x=>x.label==="Left");
- if(state===0&&hold(!!R,420))adv();else if(state===1&&hold(!!Le,420))adv();else if(state===2){if(a.length>=2){let q=(a[0].size+a[1].size)/2;if(hold(q<.19,600)){pulled=q;adv();startCharge()}}else hold(false,1)}
- else if(state===3){if(a.length>=2&&pulled){let q=(a[0].size+a[1].size)/2;if(hold(q/pulled>1.48,180)){state=4;hud();stopCharge();blastSound();score++;document.getElementById("score").textContent="スコア: "+score;blast(a)}}else hold(false,1)}
+function speak(text){
+  if(!soundOn||!("speechSynthesis" in window))return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);u.lang="ja-JP";u.rate=.92;u.pitch=.86;u.volume=.8;
+    speechSynthesis.speak(u);
+  }catch(e){}
 }
-function mid(a){if(a.length<2)return{x:F.width/2,y:F.height*.58};let p=pt(a[0].center),q=pt(a[1].center);return{x:(p.x+q.x)/2,y:(p.y+q.y)/2}}
-function lightning(x,y,r,al){f.save();f.globalAlpha=al;f.lineWidth=2*devicePixelRatio;f.shadowBlur=12;f.shadowColor="#7a55ff";for(let k=0;k<8;k++){let a=Math.random()*6.28,px=x,py=y;f.beginPath();f.moveTo(px,py);for(let s=1;s<6;s++){let rr=r*s/5,aa=a+(Math.random()-.5)*.28;px=x+Math.cos(aa)*rr;py=y+Math.sin(aa)*rr;f.lineTo(px,py)}f.strokeStyle=k%2?"#a36dff":"#54caff";f.stroke()}f.restore()}
-function chargeFx(){if(state!==3||!last)return;let a=handData(last);if(a.length<2)return;let q=mid(a),t=performance.now()/1000,r=(42+15*Math.sin(t*7))*devicePixelRatio,g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,r*2.3);g.addColorStop(0,"#fff");g.addColorStop(.18,"#ff6bff");g.addColorStop(.48,"#7048ffbb");g.addColorStop(1,"#2020ff00");f.save();f.globalCompositeOperation="lighter";f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,r*2.3,0,6.28);f.fill();lightning(q.x,q.y,r*3,.8);f.restore()}
-function blast(a){blastBusy=true;let q=mid(a),t0=performance.now();function go(n){let t=(n-t0)/1000;f.clearRect(0,0,F.width,F.height);f.save();f.globalCompositeOperation="lighter";if(t<.18){f.fillStyle=`rgba(255,255,255,${.8*(1-t/.18)})`;f.fillRect(0,0,F.width,F.height)}let p=Math.min(1,t/.7),R=55+Math.hypot(F.width,F.height)*.6*p,g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,R);g.addColorStop(0,"#fff");g.addColorStop(.12,"#ff65ff");g.addColorStop(.32,"#55bbffaa");g.addColorStop(1,"#2040ff00");f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,R,0,6.28);f.fill();lightning(q.x,q.y,Math.min(R,Math.max(F.width,F.height)*.75),Math.max(0,1-t/1.2));for(let i=0;i<45;i++){let aa=Math.random()*6.28,rr=R*(.15+Math.random()*.9);f.fillStyle=i%2?"#fff":"#ff69e8";f.beginPath();f.arc(q.x+Math.cos(aa)*rr,q.y+Math.sin(aa)*rr,(1+Math.random()*3)*devicePixelRatio,0,6.28);f.fill()}f.restore();if(t<1.5)requestAnimationFrame(go);else{f.clearRect(0,0,F.width,F.height);blastBusy=false;setTimeout(()=>{state=0;pulled=null;hud()},700)}}requestAnimationFrame(go)}
-function results(r){last=r;logic(r)}
-async function detect(){if(!running)return;if(!busy&&V.readyState>=2){busy=true;try{await hands.send({image:V})}catch(e){E("手認識エラー: "+e.message);running=false}busy=false}requestAnimationFrame(detect)}
-function render(){draw();if(!blastBusy){f.clearRect(0,0,F.width,F.height);chargeFx()}requestAnimationFrame(render)}
-start.onclick=async()=>{start.disabled=true;start.textContent="起動中…";try{A();if(typeof Hands==="undefined")throw Error("MediaPipe Handsを読み込めません");diag.textContent="AI初期化中…";hands=new Hands({locateFile:x=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${x}`});hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:.55,minTrackingConfidence:.5});hands.onResults(results);diag.textContent="カメラ許可を待っています…";let s=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false});V.srcObject=s;await V.play();resize();start.style.display="none";diag.textContent="AI・カメラ OK";setTimeout(()=>diag.style.display="none",900);running=true;detect();render()}catch(e){start.disabled=false;start.textContent="📷 カメラを開始";diag.textContent="起動できません";E("起動エラー: "+e.message)}};
-setTimeout(()=>diag.textContent=typeof Hands!=="undefined"?"AIライブラリ OK":"AIを読み込めません",900);hud();resize();
+
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)}
+function palmSize(m){return(dist(m[0],m[9])+dist(m[5],m[17]))/2}
+function isOpenPalm(m){
+  let n=0;
+  for(const q of [[8,6],[12,10],[16,14],[20,18]]) if(dist(m[0],m[q[0]])>dist(m[0],m[q[1]])*1.12)n++;
+  return n>=3;
+}
+function hold(ok,ms){
+  const now=performance.now();
+  if(!ok){stable=0;return false}
+  if(!stable)stable=now;
+  return now-stable>=ms;
+}
+function pt(p){return{x:(1-p.x)*C.width,y:p.y*C.height}}
+function handData(r){
+  return (r.multiHandLandmarks||[]).map((m,i)=>({
+    m,label:r.multiHandedness?.[i]?.label||"",open:isOpenPalm(m),size:palmSize(m),center:m[9]
+  })).filter(x=>x.open);
+}
+
+function updateHUD(){
+  const labels=[
+    "① 右手のひらを見せてください",
+    "② 次に左手のひらを見せてください",
+    "③ 両手を見せたまま体の方へ引いてください",
+    "④ みかん果汁パワーをチャージ！",
+    "⑤ 両手をカメラへ一気に近づけて放て！",
+    "⚡ みかんエネルギー波!!"
+  ];
+  statusEl.textContent=labels[state]||labels[0];
+  steps.forEach((x,i)=>{x.classList.toggle("done",i<state);x.classList.toggle("on",i===state)});
+  chargeText.style.display=state===3?"block":"none";
+  chargePanel.style.display=(state===3||state===4)?"block":"none";
+}
+function advance(){state++;stable=0;updateHUD();beep(650+state*110,.09,.035)}
+
+function drawPrivacy(){
+  if(V.readyState<2)return;
+  const W=C.width,H=C.height,block=effect==="strong"?18:effect==="sil"?70:34;
+  L.width=Math.max(10,Math.round(W/block));L.height=Math.max(7,Math.round(H/block));
+  l.setTransform(1,0,0,1,0,0);l.clearRect(0,0,L.width,L.height);l.translate(L.width,0);l.scale(-1,1);l.drawImage(V,0,0,L.width,L.height);
+  c.clearRect(0,0,W,H);c.imageSmoothingEnabled=false;c.drawImage(L,0,0,W,H);c.imageSmoothingEnabled=true;
+  if(effect==="dark"){c.fillStyle="#0008";c.fillRect(0,0,W,H)}
+  if(effect==="sil"){c.fillStyle="#000d";c.fillRect(0,0,W,H)}
+
+  if(last?.multiHandLandmarks)for(const m of last.multiHandLandmarks){
+    c.save();c.beginPath();
+    for(const [a,b] of con){
+      const A=pt(m[a]),B=pt(m[b]),pad=Math.max(17,Math.min(W,H)*.027),dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy)||1,nx=-dy/len*pad,ny=dx/len*pad;
+      c.moveTo(A.x+nx,A.y+ny);c.lineTo(B.x+nx,B.y+ny);c.lineTo(B.x-nx,B.y-ny);c.lineTo(A.x-nx,A.y-ny);c.closePath();
+    }
+    for(const p of m){const P=pt(p),r=Math.max(20,Math.min(W,H)*.03);c.moveTo(P.x+r,P.y);c.arc(P.x,P.y,r,0,Math.PI*2)}
+    c.clip();c.translate(W,0);c.scale(-1,1);c.drawImage(V,0,0,W,H);c.restore();
+
+    c.save();c.lineCap="round";c.shadowBlur=15;c.shadowColor="#ff8f23";c.strokeStyle="#ffd391";c.lineWidth=Math.max(3,Math.min(W,H)*.005);
+    for(const [a,b] of con){const A=pt(m[a]),B=pt(m[b]);c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke()}
+    c.restore();
+  }
+}
+
+function beginCharge(){
+  chargeStart=performance.now();chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");
+  startChargeSound();
+}
+function updateCharge(){
+  chargeSeconds=Math.min(10,(performance.now()-chargeStart)/1000);
+  chargeLevel=Math.min(5,Math.floor(chargeSeconds/2));
+  meterFill.style.width=Math.min(100,chargeSeconds*10)+"%";
+  chargeTimeEl.textContent=chargeSeconds.toFixed(1)+" 秒";
+  chargeText.textContent=chargeSeconds>=10?"MAX CHARGE!":"チャージ中 "+chargeLevel+"/5";
+
+  const next=chargeSeconds<4?-1:chargeSeconds<6?0:chargeSeconds<8?1:chargeSeconds<10?2:3;
+  if(next!==sageStage){
+    sageStage=next;
+    if(next>=0){
+      sageWrap.classList.add("show");
+      const msgs=[
+        "ほっほっほ。もっとパワーをためるのじゃ〜。<br>おててのなかに、おいしさが……<b>うる、るん、るん、るん……</b>",
+        "いいぞ、いいぞ〜。<br>みかんの果汁パワーが、だんだん濃くなってきたぞい。",
+        "もうひと息じゃ。<br>やさしく、じっくり……もっとパワーをためておくれ。",
+        "よし！十分たまった！<br><span style='color:#e94b00;font-size:22px'>今じゃ、放て！！</span>"
+      ];
+      const voices=[
+        "もっとパワーをためるのじゃ。おててのなかに、おいしさが、うる、るん、るん、るん。",
+        "いいぞ、いいぞ。みかんの果汁パワーが、だんだん濃くなってきたぞい。",
+        "もうひと息じゃ。やさしく、じっくり、もっとパワーをためておくれ。",
+        "よし。十分たまった。今じゃ、放て。"
+      ];
+      sageMessage.innerHTML=msgs[next];speak(voices[next]);beep(520+next*90,.14,.04,"sine");
+    }
+  }
+  if(chargeSeconds>=10&&!maxReady){maxReady=true;beep(980,.28,.055,"square")}
+}
+
+function gameLogic(r){
+  const a=handData(r),R=a.find(x=>x.label==="Right"),Le=a.find(x=>x.label==="Left");
+  if(state===0&&hold(!!R,420))advance();
+  else if(state===1&&hold(!!Le,420))advance();
+  else if(state===2){
+    if(a.length>=2){
+      const q=(a[0].size+a[1].size)/2;
+      if(hold(q<.19,600)){pulled=q;advance();beginCharge()}
+    }else hold(false,1);
+  }else if(state===3){
+    updateCharge();
+    if(a.length>=2&&pulled){
+      const q=(a[0].size+a[1].size)/2;
+      if(chargeSeconds>=1&&hold(q/pulled>1.48,180)){
+        const power=Math.max(.2,Math.min(1,Math.ceil(chargeSeconds/2)/5));
+        state=5;updateHUD();stopChargeSound();sageWrap.classList.remove("show");
+        score+=Math.round(power*100);document.getElementById("score").textContent="スコア: "+score;
+        shout.classList.add("show");speak("ぱっしゃあああ。じゃああああ。");
+        blastSound(power);startBlast(a,power);
+      }
+    }else hold(false,1);
+  }
+}
+
+function midpoint(a){
+  if(a.length<2)return{x:F.width/2,y:F.height*.58};
+  const p=pt(a[0].center),q=pt(a[1].center);return{x:(p.x+q.x)/2,y:(p.y+q.y)/2}
+}
+function lightning(x,y,r,alpha){
+  f.save();f.globalAlpha=alpha;f.lineWidth=2*devicePixelRatio;f.shadowBlur=10;f.shadowColor="#7a55ff";
+  for(let k=0;k<6;k++){
+    let a=Math.random()*Math.PI*2,px=x,py=y;f.beginPath();f.moveTo(px,py);
+    for(let s=1;s<5;s++){const rr=r*s/4,aa=a+(Math.random()-.5)*.25;px=x+Math.cos(aa)*rr;py=y+Math.sin(aa)*rr;f.lineTo(px,py)}
+    f.strokeStyle=k%2?"#a36dff":"#54caff";f.stroke();
+  }
+  f.restore();
+}
+function drawChargeFX(){
+  if(state!==3||!last)return;
+  const a=handData(last);if(a.length<2)return;
+  const q=midpoint(a),t=performance.now()/1000,scale=.55+Math.max(1,Math.ceil(chargeSeconds/2))*.16;
+  const r=(34+chargeSeconds*3+12*Math.sin(t*6))*devicePixelRatio*scale;
+  const g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,r*2.2);
+  g.addColorStop(0,"#fff");g.addColorStop(.16,"#fff17d");g.addColorStop(.34,"#ff9123");g.addColorStop(.58,"#ff4faa88");g.addColorStop(1,"#2020ff00");
+  f.save();f.globalCompositeOperation="lighter";f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,r*2.2,0,Math.PI*2);f.fill();
+  lightning(q.x,q.y,r*2.7,.45+.35*chargeSeconds/10);
+  f.restore();
+}
+function startBlast(a,power){
+  blastBusy=true;
+  const q=midpoint(a),t0=performance.now(),maxR=Math.hypot(F.width,F.height)*(.22+.55*power);
+  function frame(now){
+    const t=(now-t0)/1000;f.clearRect(0,0,F.width,F.height);f.save();f.globalCompositeOperation="lighter";
+    if(t<.16){f.fillStyle=`rgba(255,255,255,${(.55+.25*power)*(1-t/.16)})`;f.fillRect(0,0,F.width,F.height)}
+    const p=Math.min(1,t/(.55+.2*power)),R=45+maxR*p;
+    const g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,R);
+    g.addColorStop(0,"#fff");g.addColorStop(.12,"#fff496");g.addColorStop(.28,"#ff9423");g.addColorStop(.48,"#ff4a4b88");g.addColorStop(1,"#2040ff00");
+    f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,R,0,Math.PI*2);f.fill();
+    lightning(q.x,q.y,Math.min(R,Math.max(F.width,F.height)*.75),Math.max(0,1-t/1.2)*(.55+.45*power));
+    f.restore();
+    if(t<1.2+.3*power)requestAnimationFrame(frame);
+    else{f.clearRect(0,0,F.width,F.height);shout.classList.remove("show");blastBusy=false;startFireworks(power)}
+  }
+  requestAnimationFrame(frame);
+}
+function startFireworks(power){
+  const t0=performance.now(),sparks=[],bursts=3+Math.round(power*4);
+  for(let b=0;b<bursts;b++){
+    const bx=F.width*(.16+Math.random()*.68),by=F.height*(.12+Math.random()*.36),delay=b*180,count=16+Math.floor(power*14);
+    for(let i=0;i<count;i++){
+      const a=Math.random()*Math.PI*2,sp=(1.7+Math.random()*3.2)*devicePixelRatio;
+      sparks.push({x:bx,y:by,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,delay,h:(b*55+i*11)%360});
+    }
+  }
+  function fw(now){
+    const elapsed=now-t0;f.clearRect(0,0,F.width,F.height);f.save();f.globalCompositeOperation="lighter";let alive=false;
+    for(const s of sparks){
+      if(elapsed<s.delay){alive=true;continue} if(s.life<=0)continue;
+      alive=true;s.x+=s.vx;s.y+=s.vy;s.vy+=.03*devicePixelRatio;s.vx*=.988;s.vy*=.988;s.life-=.024;
+      f.globalAlpha=Math.max(0,s.life);f.fillStyle=`hsl(${s.h} 100% 65%)`;f.beginPath();f.arc(s.x,s.y,2*devicePixelRatio,0,Math.PI*2);f.fill();
+    }
+    f.restore();
+    if(alive)requestAnimationFrame(fw);else{f.clearRect(0,0,F.width,F.height);setTimeout(resetGame,700)}
+  }
+  requestAnimationFrame(fw);
+}
+
+function resetGame(){
+  state=0;stable=0;pulled=null;chargeStart=0;chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;blastBusy=false;
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");shout.classList.remove("show");stopChargeSound();updateHUD();
+}
+
+function onResults(r){last=r;gameLogic(r)}
+async function detectLoop(){
+  if(!running)return;
+  if(!busy&&V.readyState>=2){
+    busy=true;
+    try{await hands.send({image:V})}
+    catch(e){showError("手認識処理でエラーが発生しました:\n"+(e.message||e));running=false}
+    busy=false;
+  }
+  requestAnimationFrame(detectLoop);
+}
+function renderLoop(){
+  drawPrivacy();
+  if(!blastBusy){f.clearRect(0,0,F.width,F.height);drawChargeFX()}
+  requestAnimationFrame(renderLoop);
+}
+
+start.onclick=async()=>{
+  clearError();start.disabled=true;start.textContent="起動中…";diag.textContent="カメラを準備しています…";
+  try{
+    if(typeof Hands==="undefined")throw new Error("手認識AI（MediaPipe Hands）を読み込めません。ページを再読み込みしてください。");
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error("このブラウザではカメラ機能を利用できません。Google Chromeで開いてください。");
+
+    /* まずカメラを先に起動。音声機能は後回しにしてカメラ起動を邪魔しない */
+    diag.textContent="カメラの許可を待っています…";
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{width:{ideal:1280},height:{ideal:720}},
+      audio:false
+    });
+    V.srcObject=stream;
+    await V.play();
+
+    diag.textContent="手認識AIを初期化中…";
+    hands=new Hands({locateFile:file=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:.55,minTrackingConfidence:.5});
+    hands.onResults(onResults);
+
+    resize();
+    initAudio();
+    start.style.display="none";
+    diag.textContent="AI・カメラ OK";
+    setTimeout(()=>diag.style.display="none",900);
+    running=true;updateHUD();detectLoop();renderLoop();
+
+  }catch(e){
+    console.error(e);
+    start.disabled=false;start.textContent="📷 カメラを開始";
+    diag.textContent="起動できません";
+
+    let msg=e?.message||String(e);
+    if(e?.name==="NotAllowedError") msg="カメラの使用が許可されていません。Chromeのアドレスバー左側のサイト設定から「カメラ＝許可」にしてください。";
+    else if(e?.name==="NotFoundError") msg="使用できるカメラが見つかりません。PCのカメラ接続を確認してください。";
+    else if(e?.name==="NotReadableError") msg="カメラを他のアプリが使用している可能性があります。Zoom・Teams・カメラアプリ等を閉じてから再度お試しください。";
+    showError("起動エラー:\n"+msg+"\n\nエラー種類: "+(e?.name||"不明"));
+  }
+};
+
+setTimeout(()=>{
+  diag.textContent=typeof Hands!=="undefined"?"AIライブラリ OK":"AIを読み込めません";
+},900);
+
+updateHUD();resize();
 </script>
 </body>
 </html>
