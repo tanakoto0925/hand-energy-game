@@ -27,6 +27,43 @@ video{display:none}canvas{position:absolute;inset:0;width:100%;height:100%}#fx{p
 footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#000;font-size:13px;color:#cad7e6}
 #error{display:none;position:fixed;z-index:30;left:16px;right:16px;bottom:42px;background:#701515;border:1px solid #ff9999;border-radius:10px;padding:10px}
 @media(max-width:900px){main{grid-template-columns:1fr}.side{display:none}}
+
+/* --- みかんの仙人・チャージ演出 --- */
+#chargePanel{display:none;position:absolute;z-index:8;left:50%;bottom:58px;transform:translateX(-50%);
+width:min(560px,78%);padding:10px 14px;background:rgba(0,0,0,.78);border:1px solid #ffc13d;
+border-radius:14px;box-shadow:0 0 18px rgba(255,157,47,.4)}
+#chargeTop{display:flex;justify-content:space-between;align-items:center;font-weight:1000;margin-bottom:7px}
+#chargeTime{font-size:22px;color:#ffd45f}
+#meter{height:17px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35)}
+#meterFill{height:100%;width:0%;background:linear-gradient(90deg,#5ccf63,#f6da45,#ff8b31,#ff4f33);transition:width .18s linear}
+#levelMarks{display:flex;justify-content:space-between;font-size:10px;opacity:.8;margin-top:4px}
+#sageWrap{position:absolute;z-index:12;right:-330px;top:95px;width:305px;display:flex;align-items:flex-start;gap:8px;opacity:0;
+transition:right .9s ease,opacity .6s ease;pointer-events:none}
+#sageWrap.show{right:18px;opacity:1}
+#sageCloud{position:relative;width:105px;height:80px;flex:0 0 105px}
+.cloud{position:absolute;left:0;bottom:0;width:100px;height:40px;background:#fff;border-radius:40px;box-shadow:0 0 16px rgba(255,255,255,.45)}
+.cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud:before{width:54px;height:54px;left:10px;bottom:10px}.cloud:after{width:48px;height:48px;right:6px;bottom:8px}
+#sageFace{position:absolute;z-index:2;left:30px;top:0;width:62px;height:62px;border-radius:50%;
+background:radial-gradient(circle at 35% 30%,#ffe16d 0 10%,#ffb21d 35%,#ef6f00 75%);
+border:3px solid #7d4200;box-shadow:0 0 16px #ffad27}
+#sageFace:before{content:"🍃";position:absolute;left:21px;top:-24px;font-size:26px;transform:rotate(-18deg)}
+#sageFace:after{content:"〰";position:absolute;left:14px;bottom:-15px;font-size:31px;color:#fff;text-shadow:0 2px 2px #aaa}
+.eye{position:absolute;top:23px;width:7px;height:7px;background:#3b2300;border-radius:50%}
+.eye.l{left:16px}.eye.r{right:16px}
+#sageBubble{position:relative;max-width:190px;background:#fff;color:#3b2500;border:4px solid #f3a11c;border-radius:25px;
+padding:12px 13px;font-size:14px;font-weight:900;line-height:1.5;box-shadow:0 0 16px rgba(255,203,92,.45)}
+#sageBubble:before{content:"";position:absolute;left:-18px;top:32px;border-width:9px 18px 9px 0;border-style:solid;border-color:transparent #f3a11c transparent transparent}
+#sageBubble:after{content:"";position:absolute;left:-12px;top:35px;border-width:6px 13px 6px 0;border-style:solid;border-color:transparent #fff transparent transparent}
+#sageName{display:block;color:#df6900;font-size:12px;margin-bottom:3px}
+#shout{display:none;position:absolute;z-index:15;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-4deg);
+font-size:clamp(30px,6vw,78px);font-weight:1000;color:#fff7b0;text-align:center;line-height:1.06;
+text-shadow:0 0 7px #fff,0 0 18px #ff7a00,0 0 34px #ff2a00,4px 5px 0 #4f2b00;pointer-events:none}
+#shout.show{display:block;animation:popShout .65s ease-out both}
+@keyframes popShout{0%{transform:translate(-50%,-50%) scale(.15) rotate(-8deg);opacity:0}
+55%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}
+100%{transform:translate(-50%,-50%) scale(1) rotate(-4deg);opacity:1}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
@@ -41,7 +78,24 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
     <div id="privacy">🔒 顔・背景は強力モザイク</div>
     <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
     <div id="charge">チャージ中</div>
-    <div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 発射</span></div>
+    
+<div id="chargePanel">
+  <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span id="chargeTime">0.0 秒</span></div>
+  <div id="meter"><div id="meterFill"></div></div>
+  <div id="levelMarks"><span>0秒</span><span>2秒</span><span>4秒</span><span>6秒</span><span>8秒</span><span>10秒 MAX</span></div>
+</div>
+
+<div id="sageWrap">
+  <div id="sageCloud">
+    <div id="sageFace"><span class="eye l"></span><span class="eye r"></span></div>
+    <div class="cloud"></div>
+  </div>
+  <div id="sageBubble"><span id="sageName">🍊 みかんの仙人</span><span id="sageMessage">もっとパワーをためるのじゃ〜</span></div>
+</div>
+
+<div id="shout">ぱっしゃぁーーーっ、<br>じゃーーーっ！！！</div>
+
+<div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 チャージ</span><span class="step">5 放つ</span></div>
   </section>
   <aside class="side">
     <h2>プライバシーエフェクト</h2>
@@ -69,26 +123,17 @@ document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getEleme
 function beep(fr=700,d=.1,v=.04){if(!soundOn)return;A();let o=audio.createOscillator(),g=audio.createGain();o.type="square";o.frequency.value=fr;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+d)}
 function startCharge(){if(!soundOn||osc)return;A();osc=audio.createOscillator();gain=audio.createGain();osc.type="sawtooth";osc.frequency.setValueAtTime(70,audio.currentTime);osc.frequency.linearRampToValueAtTime(150,audio.currentTime+1.4);gain.gain.value=.018;osc.connect(gain).connect(audio.destination);osc.start()}
 function stopCharge(){if(osc){try{gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.08);osc.stop(audio.currentTime+.1)}catch{}osc=null;gain=null}}
-function blastSound(){if(!soundOn)return;A();let o=audio.createOscillator(),g=audio.createGain();o.type="sawtooth";o.frequency.setValueAtTime(320,audio.currentTime);o.frequency.exponentialRampToValueAtTime(48,audio.currentTime+.9);g.gain.value=.09;g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.9);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+.92)}
-function d(a,b){return Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)}function ps(m){return(d(m[0],m[9])+d(m[5],m[17]))/2}
-function open(m){let n=0;for(const q of [[8,6],[12,10],[16,14],[20,18]])if(d(m[0],m[q[0]])>d(m[0],m[q[1]])*1.12)n++;return n>=3}
-function hold(ok,ms){let n=performance.now();if(!ok){stable=0;return false}if(!stable)stable=n;return n-stable>=ms}
-function hud(){let a=["① 右手のひらを見せてください","② 次に左手のひらを見せてください","③ 両手を見せたまま体の方へ引いてください","④ 両手をカメラへ一気に近づけてください！","⚡ ENERGY BLAST!!"];statusEl.textContent=a[state];steps.forEach((x,i)=>{x.classList.toggle("done",i<state);x.classList.toggle("on",i===state)});charge.style.display=state===3?"block":"none"}
-function adv(){state++;stable=0;hud();beep(650+state*120)}
-function pt(p){return{x:(1-p.x)*C.width,y:p.y*C.height}}
-function handData(r){return(r.multiHandLandmarks||[]).map((m,i)=>({m,label:r.multiHandedness?.[i]?.label||"",open:open(m),size:ps(m),center:m[9]})).filter(x=>x.open)}
-function draw(){
- if(V.readyState<2)return;let W=C.width,H=C.height,block=effect==="strong"?18:effect==="sil"?70:34;
- L.width=Math.max(10,Math.round(W/block));L.height=Math.max(7,Math.round(H/block));l.setTransform(1,0,0,1,0,0);l.clearRect(0,0,L.width,L.height);l.translate(L.width,0);l.scale(-1,1);l.drawImage(V,0,0,L.width,L.height);
- c.clearRect(0,0,W,H);c.imageSmoothingEnabled=false;c.drawImage(L,0,0,W,H);c.imageSmoothingEnabled=true;
- if(effect==="dark"){c.fillStyle="#0008";c.fillRect(0,0,W,H)}if(effect==="sil"){c.fillStyle="#000d";c.fillRect(0,0,W,H)}
- if(last?.multiHandLandmarks)for(const m of last.multiHandLandmarks){
-   c.save();c.beginPath();
-   for(const [a,b] of con){let A=pt(m[a]),B=pt(m[b]),pad=Math.max(17,Math.min(W,H)*.027),dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy)||1,nx=-dy/len*pad,ny=dx/len*pad;c.moveTo(A.x+nx,A.y+ny);c.lineTo(B.x+nx,B.y+ny);c.lineTo(B.x-nx,B.y-ny);c.lineTo(A.x-nx,A.y-ny);c.closePath()}
-   for(const p of m){let P=pt(p),r=Math.max(20,Math.min(W,H)*.03);c.moveTo(P.x+r,P.y);c.arc(P.x,P.y,r,0,Math.PI*2)}c.clip();c.translate(W,0);c.scale(-1,1);c.drawImage(V,0,0,W,H);c.restore();
-   c.save();c.lineCap="round";c.shadowBlur=15;c.shadowColor="#ff7f30";c.strokeStyle="#ffd096";c.lineWidth=Math.max(3,Math.min(W,H)*.005);
-   for(const [a,b] of con){let A=pt(m[a]),B=pt(m[b]);c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke()}c.restore()
- }
+function blastSound(power=1){
+  if(!soundOn)return;
+  initAudio();
+  const now=audioCtx.currentTime;
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type="sawtooth";
+  o.frequency.setValueAtTime(260+power*180,now);
+  o.frequency.exponentialRampToValueAtTime(50,now+.75+power*.25);
+  g.gain.setValueAtTime(.055+.04*power,now);
+  g.gain.exponentialRampToValueAtTime(.0001,now+.85+power*.25);
+  o.connect(g).connect(audioCtx.destination);o.start(now);o.stop(now+1.2);
 }
 function logic(r){let a=handData(r),R=a.find(x=>x.label==="Right"),Le=a.find(x=>x.label==="Left");
  if(state===0&&hold(!!R,420))adv();else if(state===1&&hold(!!Le,420))adv();else if(state===2){if(a.length>=2){let q=(a[0].size+a[1].size)/2;if(hold(q<.19,600)){pulled=q;adv();startCharge()}}else hold(false,1)}
