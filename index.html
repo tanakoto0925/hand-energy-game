@@ -84,11 +84,29 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   to{opacity:1;transform:scale(1.05);transform-origin:133px 122px}
 }
 @keyframes fighterCorePulse{
-  from{opacity:.72;transform:scale(.90);transform-origin:3px 210px}
-  to{opacity:1;transform:scale(1.18);transform-origin:3px 210px}
+  from{opacity:.72;transform:scale(.90);transform-origin:-8px 217px}
+  to{opacity:1;transform:scale(1.18);transform-origin:-8px 217px}
 }
 @media(max-width:900px){
   #fighterWrap{width:min(220px,33vw);right:6px;bottom:20px}
+}
+
+
+#fireHint{
+  display:none;position:absolute;z-index:16;left:50%;top:28%;
+  transform:translate(-50%,-50%) rotate(-2deg);
+  padding:12px 20px;border:4px solid #ff9b00;border-radius:22px;
+  background:rgba(255,249,220,.96);color:#3a2200;
+  font-size:clamp(22px,3.4vw,46px);font-weight:1000;text-align:center;
+  box-shadow:0 0 22px rgba(255,174,40,.75);
+  text-shadow:0 1px 0 #fff;
+}
+#fireHint strong{color:#e43b00;font-size:1.22em}
+#fireHint.show{display:block;animation:fireHintPop .55s ease-out both}
+@keyframes fireHintPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-5deg)}
+  65%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(1deg)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-2deg)}
 }
 
 </style>
@@ -101,7 +119,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 <section class="stage">
   <video id="video" autoplay playsinline muted></video>
   <canvas id="view"></canvas><canvas id="fx"></canvas>
-  <div id="statusBox"><div id="status">準備中</div><div id="sub">右手 → 左手 → 両手を引く → 10秒チャージ → 放つ！</div></div>
+  <div id="statusBox"><div id="status">準備中</div><div id="sub">右手 → 左手 → 両手を引く → 10秒チャージ → 両手を前に出して発射！</div></div>
   <div id="privacy">🔒 顔・背景は強力モザイク</div>
   <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
   <div id="chargeText">チャージ中</div>
@@ -110,7 +128,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
     <div id="meter"><div id="meterFill"></div></div>
     <div id="levelMarks"><span>0秒</span><span>2秒</span><span>4秒</span><span>6秒</span><span>8秒</span><span>10秒 MAX</span></div>
   </div>
-  <div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 チャージ</span><span class="step">5 放つ</span></div>
+  <div id="steps"><span class="step on">1 右手</span><span class="step">2 左手</span><span class="step">3 引く</span><span class="step">4 チャージ</span><span class="step">5 両手を前へ</span></div>
   <div id="sageWrap">
     <div id="sageCloud" aria-label="みかんの仙人">
       <svg id="sageSvg" viewBox="0 0 150 130" role="img" aria-label="雲に乗ったみかんの仙人">
@@ -171,6 +189,9 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   </div>
   <div id="shout">ぱっしゃぁーーーっ、<br>じゃーーーっ！！！</div>
 
+
+  <div id="fireHint">両手を前に出して<br><strong>発射！！</strong></div>
+
   <div id="fighterWrap" aria-label="発射するみかん君">
     <svg id="fighterSvg" viewBox="0 0 240 300" role="img" aria-label="道着を着て両手でエネルギーを放つみかん君">
       <defs>
@@ -225,14 +246,14 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 
       <!-- back arm -->
       <g stroke="#7d4a24" stroke-width="3">
-        <path d="M107 143 Q70 157 49 174 Q34 185 28 198" fill="none" stroke="#f1bf8e" stroke-width="20" stroke-linecap="round"/>
-        <ellipse cx="26" cy="200" rx="17" ry="24" fill="#ffd4ab"/>
+        <path d="M109 144 Q76 160 48 185 Q30 199 14 207" fill="none" stroke="#f1bf8e" stroke-width="20" stroke-linecap="round"/>
+        <ellipse cx="12" cy="208" rx="17" ry="24" fill="#ffd4ab"/>
       </g>
 
       <!-- front arm -->
       <g stroke="#7d4a24" stroke-width="3">
-        <path d="M126 151 Q87 166 60 185 Q41 198 29 219" fill="none" stroke="#f1bf8e" stroke-width="21" stroke-linecap="round"/>
-        <ellipse cx="27" cy="220" rx="17" ry="24" fill="#ffd4ab"/>
+        <path d="M128 153 Q88 170 55 198 Q34 216 14 226" fill="none" stroke="#f1bf8e" stroke-width="21" stroke-linecap="round"/>
+        <ellipse cx="12" cy="227" rx="17" ry="24" fill="#ffd4ab"/>
       </g>
 
       <!-- fingers, palm aimed left -->
@@ -269,9 +290,9 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 
       <!-- energy core at both hands -->
       <g id="fighterCore" filter="url(#fwGlow)">
-        <circle cx="3" cy="210" r="38" fill="none" stroke="#83efff" stroke-width="7" opacity=".55"/>
-        <circle cx="3" cy="210" r="26" fill="#9fefff" opacity=".40"/>
-        <circle cx="3" cy="210" r="15" fill="#fff"/>
+        <circle cx="-8" cy="217" r="38" fill="none" stroke="#83efff" stroke-width="7" opacity=".55"/>
+        <circle cx="-8" cy="217" r="26" fill="#9fefff" opacity=".40"/>
+        <circle cx="-8" cy="217" r="15" fill="#fff"/>
         <g stroke="#dffcff" stroke-width="3">
           <path d="M3 162 L3 183"/><path d="M3 237 L3 258"/>
           <path d="M-45 210 L-23 210"/><path d="M29 210 L51 210"/>
@@ -305,7 +326,7 @@ const c=C.getContext("2d"),f=F.getContext("2d"),L=document.createElement("canvas
 const start=document.getElementById("start"),diag=document.getElementById("diag"),statusEl=document.getElementById("status"),
 chargeText=document.getElementById("chargeText"),chargePanel=document.getElementById("chargePanel"),chargeTimeEl=document.getElementById("chargeTime"),
 meterFill=document.getElementById("meterFill"),err=document.getElementById("error"),steps=[...document.querySelectorAll(".step")],
-sageWrap=document.getElementById("sageWrap"),sageMessage=document.getElementById("sageMessage"),shout=document.getElementById("shout"),fighterWrap=document.getElementById("fighterWrap");
+sageWrap=document.getElementById("sageWrap"),sageMessage=document.getElementById("sageMessage"),shout=document.getElementById("shout"),fighterWrap=document.getElementById("fighterWrap"),fireHint=document.getElementById("fireHint");
 
 let hands=null,running=false,busy=false,last=null,state=0,stable=0,pulled=null,score=0,effect="max";
 let audio=null,osc=null,gain=null,soundOn=true,blastBusy=false;
@@ -413,13 +434,14 @@ function updateHUD(){
     "② 次に左手のひらを見せてください",
     "③ 両手を見せたまま体の方へ引いてください",
     "④ みかん果汁パワーをチャージ！",
-    "⑤ 両手をカメラへ一気に近づけて放て！",
+    "⑤ 両手を前にグッと伸ばして、エネルギーを発射！",
     "⚡ みかんエネルギー波!!"
   ];
   statusEl.textContent=labels[state]||labels[0];
   steps.forEach((x,i)=>{x.classList.toggle("done",i<state);x.classList.toggle("on",i===state)});
   chargeText.style.display=state===3?"block":"none";
   chargePanel.style.display=(state===3||state===4)?"block":"none";
+  if(fireHint){fireHint.classList.toggle("show",state===4);}
 }
 function advance(){state++;stable=0;updateHUD();beep(650+state*110,.09,.035)}
 
@@ -468,13 +490,13 @@ function updateCharge(){
         "ほっほっほ。もっとパワーをためるのじゃ〜。<br>おててのなかに、おいしさが……<b>うる、るん、るん、るん……</b>",
         "いいぞ、いいぞ〜。<br>みかんの果汁パワーが、だんだん濃くなってきたぞい。",
         "もうひと息じゃ。<br>やさしく、じっくり……もっとパワーをためておくれ。",
-        "よし！十分たまった！<br><span style='color:#e94b00;font-size:27px;text-shadow:0 0 8px #ffd36a'>今じゃ、放て！！</span>"
+        "よし！十分たまった！<br><span style='color:#e94b00;font-size:27px;text-shadow:0 0 8px #ffd36a'>今じゃ！両手を前に出して、放て！！</span>"
       ];
       const voices=[
         "もっとパワーをためるのじゃ。おててのなかに、おいしさが、うる、るん、るん、るん。",
         "いいぞ、いいぞ。みかんの果汁パワーが、だんだん濃くなってきたぞい。",
         "もうひと息じゃ。やさしく、じっくり、もっとパワーをためておくれ。",
-        "よし。十分たまった。今じゃ、放て。"
+        "よし。十分たまった。今じゃ、両手を前に出して、放て。"
       ];
       sageMessage.innerHTML=msgs[next];speak(voices[next]);beep(520+next*90,.14,.04,"sine");
     }
@@ -522,12 +544,93 @@ function lightning(x,y,r,alpha){
 function drawChargeFX(){
   if(state!==3||!last)return;
   const a=handData(last);if(a.length<2)return;
-  const q=midpoint(a),t=performance.now()/1000,scale=.55+Math.max(1,Math.ceil(chargeSeconds/2))*.16;
-  const r=(34+chargeSeconds*3+12*Math.sin(t*6))*devicePixelRatio*scale;
-  const g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,r*2.2);
-  g.addColorStop(0,"#fff");g.addColorStop(.16,"#fff17d");g.addColorStop(.34,"#ff9123");g.addColorStop(.58,"#ff4faa88");g.addColorStop(1,"#2020ff00");
-  f.save();f.globalCompositeOperation="lighter";f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,r*2.2,0,Math.PI*2);f.fill();
-  lightning(q.x,q.y,r*2.7,.45+.35*chargeSeconds/10);
+  const q=midpoint(a),t=performance.now()/1000;
+  const power=Math.max(0,Math.min(1,chargeSeconds/10));
+  const d=devicePixelRatio||1;
+
+  // 0秒はかなり小さく、10秒で大きく育つ
+  // 前版より「最初は小さく」「10秒は約2倍」に見えるように調整
+  const minCore=10*d;
+  const maxCore=190*d;
+  const growth=Math.pow(power,1.18);
+  const pulse=(2+18*power)*Math.sin(t*(5+power*8))*d;
+  const coreR=Math.max(8*d,minCore+(maxCore-minCore)*growth+pulse);
+
+  // 外側オーラも後半ほど急激に広がる
+  const auraR=coreR*(1.7+1.45*power);
+
+  f.save();
+  f.globalCompositeOperation="lighter";
+
+  const aura=f.createRadialGradient(q.x,q.y,0,q.x,q.y,auraR);
+  aura.addColorStop(0,"rgba(255,255,255,.98)");
+  aura.addColorStop(.10,"rgba(224,253,255,.96)");
+  aura.addColorStop(.28,"rgba(100,220,255,.90)");
+  aura.addColorStop(.52,"rgba(70,130,255,.58)");
+  aura.addColorStop(.74,"rgba(130,90,255,.34)");
+  aura.addColorStop(1,"rgba(30,50,255,0)");
+  f.fillStyle=aura;
+  f.beginPath();f.arc(q.x,q.y,auraR,0,Math.PI*2);f.fill();
+
+  const core=f.createRadialGradient(q.x,q.y,0,q.x,q.y,coreR);
+  core.addColorStop(0,"#ffffff");
+  core.addColorStop(.20,"#ecffff");
+  core.addColorStop(.45,"#8ee9ff");
+  core.addColorStop(.70,"#5c9cff");
+  core.addColorStop(.88,"rgba(105,70,255,.84)");
+  core.addColorStop(1,"rgba(70,45,255,0)");
+  f.fillStyle=core;
+  f.beginPath();f.arc(q.x,q.y,coreR,0,Math.PI*2);f.fill();
+
+  // 2秒ごとにリング追加。10秒で5本
+  const rings=Math.max(1,Math.ceil(chargeSeconds/2));
+  for(let i=0;i<rings;i++){
+    const rr=coreR*(1.10+i*.20)+(Math.sin(t*4+i)*5*d);
+    f.globalAlpha=.24+.62*power;
+    f.strokeStyle=i%2===0?"#ffffff":"#91baff";
+    f.lineWidth=(1.5+5*power)*d;
+    f.beginPath();f.arc(q.x,q.y,rr,0,Math.PI*2);f.stroke();
+  }
+
+  // 炭酸っぽい泡。秒数とともに数と大きさを増やす
+  const bubbles=5+Math.floor(power*48);
+  for(let i=0;i<bubbles;i++){
+    const ang=(i/bubbles)*Math.PI*2+t*(.7+power*2.1)+(i%4)*.55;
+    const orbit=coreR*(.48+((i*37)%100)/100*(1.5+power*.8));
+    const bx=q.x+Math.cos(ang)*orbit;
+    const by=q.y+Math.sin(ang)*orbit*.76;
+    const br=(1.2+power*5.2+((i*11)%4))*d;
+    f.globalAlpha=.24+.62*power;
+    f.strokeStyle=i%3===0?"#ffffff":i%3===1?"#bfefff":"#95b9ff";
+    f.lineWidth=(1+1.2*power)*d;
+    f.beginPath();f.arc(bx,by,br,0,Math.PI*2);f.stroke();
+  }
+
+  // 光粒子
+  const particles=6+Math.floor(power*42);
+  for(let i=0;i<particles;i++){
+    const ang=i*2.17+t*(.55+power*1.7);
+    const rr=coreR*(1.05+((i*23)%100)/58);
+    const px=q.x+Math.cos(ang)*rr;
+    const py=q.y+Math.sin(ang)*rr*.74;
+    const pr=(1+power*3.8+((i*7)%3))*d;
+    f.globalAlpha=.22+.58*power;
+    f.fillStyle=i%4===0?"#ffffff":i%4===1?"#80e8ff":i%4===2?"#8ea9ff":"#b892ff";
+    f.beginPath();f.arc(px,py,pr,0,Math.PI*2);f.fill();
+  }
+
+  lightning(q.x,q.y,auraR*(1.05+.35*power),.16+.82*power);
+
+  // 8秒以降は白熱、10秒で最大感
+  if(chargeSeconds>=8){
+    const hot=.5+.5*Math.abs(Math.sin(t*11));
+    f.globalAlpha=.10+.32*hot*power;
+    f.fillStyle="#ffffff";
+    f.beginPath();
+    f.arc(q.x,q.y,coreR*(1.02+.10*hot),0,Math.PI*2);
+    f.fill();
+  }
+
   f.restore();
 }
 
@@ -656,6 +759,7 @@ function drawMikanLauncher(x,y,s=1){
 
 function startTravelBlast(a,power){
   blastBusy=true;
+  if(fireHint){fireHint.classList.remove("show");}
   if(fighterWrap){fighterWrap.classList.add("show","fire");}
   const d=devicePixelRatio||1;
   const t0=performance.now();
@@ -1034,7 +1138,7 @@ function startFireworks(power){
 
 function resetGame(){
   state=0;stable=0;pulled=null;chargeStart=0;chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;blastBusy=false;
-  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");shout.classList.remove("show");if(fighterWrap){fighterWrap.classList.remove("show","fire");}stopChargeSound();updateHUD();
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");shout.classList.remove("show");if(fighterWrap){fighterWrap.classList.remove("show","fire");}if(fireHint){fireHint.classList.remove("show");}stopChargeSound();updateHUD();
 }
 
 function onResults(r){last=r;gameLogic(r)}
