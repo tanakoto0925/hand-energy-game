@@ -71,7 +71,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
   <div id="chargeText">チャージ中</div>
   <div id="chargePanel">
-    <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span id="chargeTime">0.0 秒</span></div>
+    <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span><span id="chargePower">0%</span>　<span id="chargeTime">0.0 秒</span></span></div>
     <div id="meter"><div id="meterFill"></div></div>
     <div id="levelMarks"><span>0秒</span><span>2秒</span><span>4秒</span><span>6秒</span><span>8秒</span><span>10秒 MAX</span></div>
   </div>
@@ -101,7 +101,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 const V=document.getElementById("video"),C=document.getElementById("view"),F=document.getElementById("fx");
 const c=C.getContext("2d"),f=F.getContext("2d"),L=document.createElement("canvas"),l=L.getContext("2d");
 const start=document.getElementById("start"),diag=document.getElementById("diag"),statusEl=document.getElementById("status"),
-chargeText=document.getElementById("chargeText"),chargePanel=document.getElementById("chargePanel"),chargeTimeEl=document.getElementById("chargeTime"),
+chargeText=document.getElementById("chargeText"),chargePanel=document.getElementById("chargePanel"),chargeTimeEl=document.getElementById("chargeTime"),chargePowerEl=document.getElementById("chargePower"),
 meterFill=document.getElementById("meterFill"),err=document.getElementById("error"),steps=[...document.querySelectorAll(".step")],
 sageWrap=document.getElementById("sageWrap"),sageMessage=document.getElementById("sageMessage"),shout=document.getElementById("shout");
 
@@ -247,7 +247,7 @@ function drawPrivacy(){
 
 function beginCharge(){
   chargeStart=performance.now();chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;
-  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";chargePowerEl.textContent="0%";sageWrap.classList.remove("show");
   startChargeSound();
 }
 function updateCharge(){
@@ -255,7 +255,8 @@ function updateCharge(){
   chargeLevel=Math.min(5,Math.floor(chargeSeconds/2));
   meterFill.style.width=Math.min(100,chargeSeconds*10)+"%";
   chargeTimeEl.textContent=chargeSeconds.toFixed(1)+" 秒";
-  chargeText.textContent=chargeSeconds>=10?"MAX CHARGE!":"チャージ中 "+chargeLevel+"/5";
+  chargePowerEl.textContent=Math.round(chargeSeconds*10)+"%";
+  chargeText.textContent=chargeSeconds>=10?"MAX CHARGE! 100%":"チャージ中 "+Math.round(chargeSeconds*10)+"%";
 
   const next=chargeSeconds<4?-1:chargeSeconds<6?0:chargeSeconds<8?1:chargeSeconds<10?2:3;
   if(next!==sageStage){
@@ -320,12 +321,64 @@ function lightning(x,y,r,alpha){
 function drawChargeFX(){
   if(state!==3||!last)return;
   const a=handData(last);if(a.length<2)return;
-  const q=midpoint(a),t=performance.now()/1000,scale=.55+Math.max(1,Math.ceil(chargeSeconds/2))*.16;
-  const r=(34+chargeSeconds*3+12*Math.sin(t*6))*devicePixelRatio*scale;
-  const g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,r*2.2);
-  g.addColorStop(0,"#fff");g.addColorStop(.16,"#fff17d");g.addColorStop(.34,"#ff9123");g.addColorStop(.58,"#ff4faa88");g.addColorStop(1,"#2020ff00");
-  f.save();f.globalCompositeOperation="lighter";f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,r*2.2,0,Math.PI*2);f.fill();
-  lightning(q.x,q.y,r*2.7,.45+.35*chargeSeconds/10);
+  const q=midpoint(a),t=performance.now()/1000;
+  const power=Math.max(0,Math.min(1,chargeSeconds/10));
+  const d=devicePixelRatio||1;
+
+  // 秒数に比例して本体を大きくする。10秒で開始時の約4倍。
+  const base=24*d;
+  const pulse=(4+12*power)*Math.sin(t*(5+power*7))*d;
+  const coreR=base+(92*d*power)+pulse;
+  const auraR=coreR*(1.8+1.4*power);
+
+  f.save();
+  f.globalCompositeOperation="lighter";
+
+  const aura=f.createRadialGradient(q.x,q.y,0,q.x,q.y,auraR);
+  aura.addColorStop(0,"rgba(255,255,255,.98)");
+  aura.addColorStop(.10,"rgba(255,246,125,.95)");
+  aura.addColorStop(.28,"rgba(255,145,35,.88)");
+  aura.addColorStop(.52,"rgba(255,70,170,.55)");
+  aura.addColorStop(.76,"rgba(100,75,255,.30)");
+  aura.addColorStop(1,"rgba(25,45,255,0)");
+  f.fillStyle=aura;f.beginPath();f.arc(q.x,q.y,auraR,0,Math.PI*2);f.fill();
+
+  const core=f.createRadialGradient(q.x,q.y,0,q.x,q.y,coreR);
+  core.addColorStop(0,"#ffffff");core.addColorStop(.28,"#fff7a0");
+  core.addColorStop(.58,"#ff9a2f");core.addColorStop(.82,"rgba(255,65,130,.82)");
+  core.addColorStop(1,"rgba(110,45,255,0)");
+  f.fillStyle=core;f.beginPath();f.arc(q.x,q.y,coreR,0,Math.PI*2);f.fill();
+
+  // 2秒ごとにリングを増やす（最大5本）。
+  const rings=Math.max(1,Math.ceil(chargeSeconds/2));
+  for(let i=0;i<rings;i++){
+    const rr=coreR*(1.18+i*.28)+(Math.sin(t*4+i)*6*d);
+    f.globalAlpha=.25+.55*power;
+    f.strokeStyle=i%2===0?"#fff29b":"#b97aff";
+    f.lineWidth=(2+4*power)*d;
+    f.beginPath();f.arc(q.x,q.y,rr,0,Math.PI*2);f.stroke();
+  }
+
+  // パワーが増えるほど光粒子を増やす。
+  const particles=8+Math.floor(power*34);
+  for(let i=0;i<particles;i++){
+    const ang=(i/particles)*Math.PI*2+t*(.8+power*1.8)+(i%3)*.7;
+    const orbit=coreR*(1.35+((i*37)%100)/100*(1.3+power));
+    const px=q.x+Math.cos(ang)*orbit,py=q.y+Math.sin(ang)*orbit*.72;
+    const pr=(1.5+power*4+((i*13)%3))*d;
+    f.globalAlpha=.35+.55*power;
+    f.fillStyle=i%3===0?"#ffffff":i%3===1?"#ffb33b":"#a56cff";
+    f.beginPath();f.arc(px,py,pr,0,Math.PI*2);f.fill();
+  }
+
+  lightning(q.x,q.y,auraR*(1+.45*power),.28+.68*power);
+
+  // 8秒以降は白熱して最大チャージ感を出す。
+  if(chargeSeconds>=8){
+    f.globalAlpha=.15+.20*Math.abs(Math.sin(t*10));
+    f.fillStyle="#ffffff";
+    f.beginPath();f.arc(q.x,q.y,coreR*(1.05+.12*Math.sin(t*9)),0,Math.PI*2);f.fill();
+  }
   f.restore();
 }
 function startBlast(a,power){
@@ -369,7 +422,7 @@ function startFireworks(power){
 
 function resetGame(){
   state=0;stable=0;pulled=null;chargeStart=0;chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;blastBusy=false;
-  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");shout.classList.remove("show");stopChargeSound();updateHUD();
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";chargePowerEl.textContent="0%";sageWrap.classList.remove("show");shout.classList.remove("show");stopChargeSound();updateHUD();
 }
 
 function onResults(r){last=r;gameLogic(r)}
