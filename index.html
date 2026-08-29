@@ -358,37 +358,155 @@ function drawMikanLauncher(x,y,s=1){
   f.restore();
 }
 
+
+function drawMikanLauncher(x,y,s=1){
+  const d=devicePixelRatio||1;
+  f.save();
+  f.translate(x,y);
+  f.scale(s*d,s*d);
+
+  f.shadowBlur=20;f.shadowColor="#ff9c28";
+  f.fillStyle="#ff941a";
+  f.beginPath();f.arc(0,0,32,0,Math.PI*2);f.fill();
+  f.shadowBlur=0;
+
+  f.fillStyle="#63c84c";
+  f.beginPath();f.ellipse(-5,-35,12,6,-.45,0,Math.PI*2);f.fill();
+  f.beginPath();f.ellipse(8,-37,12,6,.35,0,Math.PI*2);f.fill();
+
+  f.fillStyle="#3c2600";
+  f.beginPath();f.arc(-10,-5,3.2,0,Math.PI*2);f.arc(10,-5,3.2,0,Math.PI*2);f.fill();
+  f.strokeStyle="#3c2600";f.lineWidth=2;
+  f.beginPath();f.arc(0,6,9,.15*Math.PI,.85*Math.PI);f.stroke();
+
+  f.strokeStyle="#ffd0a5";f.lineWidth=8;f.lineCap="round";
+  f.beginPath();f.moveTo(-23,12);f.lineTo(-52,2);f.lineTo(-72,0);f.stroke();
+  f.restore();
+}
+
 function startTravelBlast(a,power){
   blastBusy=true;
   const d=devicePixelRatio||1;
   const t0=performance.now();
   const pwr=Math.max(.2,Math.min(1,power));
 
-  // 発射元は画面右のみかん君、着弾は画面左。
   const startX=F.width*.82;
   const startY=F.height*.50;
   const endX=F.width*.18;
   const endY=F.height*.50;
+  const total=2700;
 
-  // 前より明確に見えるよう、約2.4秒かけて移動。
-  const total=2400;
   const bubbles=[];
+  const streaks=[];
+
+  for(let i=0;i<34;i++){
+    streaks.push({
+      off:(Math.random()-.5)*100*d,
+      len:(40+Math.random()*150)*d,
+      sp:.5+Math.random()*1.4,
+      a:.12+Math.random()*.35
+    });
+  }
 
   function ease(t){return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2}
 
   function addBubble(x,y,amount,progress){
     for(let i=0;i<amount;i++){
       const ang=Math.random()*Math.PI*2;
-      const sp=(.4+Math.random()*1.8)*d;
+      const sp=(.5+Math.random()*(1.8+2.2*progress))*d;
       bubbles.push({
-        x:x+(Math.random()-.5)*18*d,
-        y:y+(Math.random()-.5)*18*d,
+        x:x+(Math.random()-.5)*24*d,
+        y:y+(Math.random()-.5)*24*d,
         vx:Math.cos(ang)*sp,
         vy:Math.sin(ang)*sp,
-        r:(1.5+Math.random()*(3+7*progress))*d,
+        r:(1.5+Math.random()*(4+9*progress))*d,
         life:1
       });
     }
+  }
+
+  function drawEnergySphere(x,y,coreR,swell,now,burstPrep=false){
+    const auraR=coreR*(1.9+1.15*swell);
+
+    const aura=f.createRadialGradient(x,y,0,x,y,auraR);
+    aura.addColorStop(0,"rgba(255,255,255,1)");
+    aura.addColorStop(.08,"rgba(220,255,255,.98)");
+    aura.addColorStop(.22,"rgba(120,235,255,.92)");
+    aura.addColorStop(.45,"rgba(70,155,255,.62)");
+    aura.addColorStop(.68,"rgba(120,90,255,.34)");
+    aura.addColorStop(1,"rgba(30,50,255,0)");
+    f.fillStyle=aura;
+    f.beginPath();f.arc(x,y,auraR,0,Math.PI*2);f.fill();
+
+    // 外周リング 3層
+    for(let k=0;k<3;k++){
+      const rr=coreR*(1.12+k*.22)+(Math.sin(now/(75+k*20)+k)*5*d);
+      f.globalAlpha=.3+.22*swell;
+      f.strokeStyle=k===0?"#ffffff":k===1?"#79e9ff":"#ae8cff";
+      f.lineWidth=(2.2+3.0*swell-k*.35)*d;
+      f.beginPath();f.arc(x,y,rr,0,Math.PI*2);f.stroke();
+    }
+    f.globalAlpha=1;
+
+    // 中心核
+    const core=f.createRadialGradient(x,y,0,x,y,coreR);
+    core.addColorStop(0,"#ffffff");
+    core.addColorStop(.15,"#f6ffff");
+    core.addColorStop(.35,"#bff7ff");
+    core.addColorStop(.58,"#56cfff");
+    core.addColorStop(.80,"rgba(89,96,255,.88)");
+    core.addColorStop(1,"rgba(60,40,255,0)");
+    f.fillStyle=core;
+    f.beginPath();f.arc(x,y,coreR,0,Math.PI*2);f.fill();
+
+    // 中の泡
+    const inner=10+Math.floor(42*swell);
+    f.lineWidth=1.5*d;
+    for(let i=0;i<inner;i++){
+      const ang=i*2.399+now/660*(1+(i%4)*.20);
+      const rr=coreR*(.12+((i*31)%100)/118);
+      const bx=x+Math.cos(ang)*rr;
+      const by=y+Math.sin(ang)*rr*.75;
+      const br=(1.2+4.8*swell+((i*7)%4))*d;
+      f.globalAlpha=.30+.62*swell;
+      f.strokeStyle=i%3===0?"#ffffff":i%3===1?"#baf5ff":"#8fc9ff";
+      f.beginPath();f.arc(bx,by,br,0,Math.PI*2);f.stroke();
+    }
+    f.globalAlpha=1;
+
+    // 星形フレア
+    const flare=(12+32*swell)*d;
+    f.strokeStyle="rgba(255,255,255,.85)";
+    f.lineWidth=(1.5+2*swell)*d;
+    f.beginPath();
+    f.moveTo(x-flare,y);f.lineTo(x+flare,y);
+    f.moveTo(x,y-flare);f.lineTo(x,y+flare);
+    f.stroke();
+
+    // パワー粒子
+    const particles=18+Math.floor(48*swell);
+    for(let i=0;i<particles;i++){
+      const ang=i*2.17+now/420*(.6+(i%5)*.05);
+      const rr=coreR*(1.1+((i*23)%100)/55);
+      const px=x+Math.cos(ang)*rr;
+      const py=y+Math.sin(ang)*rr*.74;
+      const pr=(1+Math.random()*(2.4+3.2*swell))*d;
+      f.globalAlpha=.26+.55*swell;
+      f.fillStyle=i%4===0?"#ffffff":i%4===1?"#79e9ff":i%4===2?"#8e9dff":"#b28cff";
+      f.beginPath();f.arc(px,py,pr,0,Math.PI*2);f.fill();
+    }
+    f.globalAlpha=1;
+
+    // 破裂前の白熱
+    if(burstPrep){
+      const q=.5+.5*Math.abs(Math.sin(now/22));
+      f.globalAlpha=.16+.30*q;
+      f.fillStyle="#ffffff";
+      f.beginPath();f.arc(x,y,coreR*(1.02+.14*q),0,Math.PI*2);f.fill();
+      f.globalAlpha=1;
+    }
+
+    lightning(x,y,auraR*(1.08+.32*swell),.16+.78*swell);
   }
 
   function frame(now){
@@ -397,128 +515,90 @@ function startTravelBlast(a,power){
 
     f.clearRect(0,0,F.width,F.height);
     f.save();
-    f.globalCompositeOperation="lighter";
 
-    // みかん君は発射中ずっと右側に表示。
+    // 背景に薄い青いフラッシュ
+    if(p>.16){
+      const flash=.05+.10*Math.sin(now/90)*Math.min(1,p*1.2);
+      f.fillStyle=`rgba(30,80,160,${Math.max(0,flash)})`;
+      f.fillRect(0,0,F.width,F.height);
+    }
+
     f.globalCompositeOperation="source-over";
     drawMikanLauncher(startX+48*d,startY,0.9);
     f.globalCompositeOperation="lighter";
 
-    let move=0, swell=0, holdBurst=false;
-
-    // 0～18%: みかん君の前でエネルギーを作る
-    if(p<.18){
+    let move=0,swell=0,burstPrep=false;
+    if(p<.16){
       move=0;
-      swell=p/.18*.20;
-    }
-    // 18～82%: 右→左へはっきり移動しながら膨らむ
-    else if(p<.82){
-      const q=(p-.18)/.64;
+      swell=(p/.16)*.20;
+    }else if(p<.80){
+      const q=(p-.16)/.64;
       move=ease(q);
-      swell=.20+.68*q;
-    }
-    // 82～100%: 左側でさらに膨らみ、炭酸が弾ける寸前に震える
-    else{
+      swell=.20+.70*q;
+    }else{
       move=1;
-      const q=(p-.82)/.18;
-      swell=.88+.12*q;
-      holdBurst=true;
+      const q=(p-.80)/.20;
+      swell=.90+.10*q;
+      burstPrep=true;
     }
 
     const x=startX+(endX-startX)*move;
-    const y=startY+(endY-startY)*move + Math.sin(move*Math.PI*4)*8*d*(1-move);
-    const wobble=holdBurst ? Math.sin(now/22)*7*d*(p-.82)/.18 : 0;
+    const y=startY+(endY-startY)*move + Math.sin(move*Math.PI*4)*9*d*(1-move);
+    const wobble=burstPrep ? Math.sin(now/18)*8*d*((p-.80)/.20) : 0;
 
-    // 球は時間とともに大きくなる
-    const coreR=(18+92*swell)*d + Math.sin(now/50)*(3+9*swell)*d;
-    const auraR=coreR*(1.7+1.0*swell);
-
-    // 右→左へ流れる光の帯
+    // 高速流線
     if(move>0){
+      for(const s of streaks){
+        const sx=startX-(startX-x)*(.10+s.sp*.72);
+        const sy=startY+s.off;
+        f.globalAlpha=s.a*(.4+.6*move);
+        f.strokeStyle="#8fdcff";
+        f.lineWidth=(1.2+1.8*s.sp)*d;
+        f.beginPath();
+        f.moveTo(Math.min(startX,sx+s.len),sy);
+        f.lineTo(Math.max(x,sx),sy);
+        f.stroke();
+      }
+      f.globalAlpha=1;
+
+      // 太いメインビーム
       const grad=f.createLinearGradient(startX,startY,x+wobble,y);
-      grad.addColorStop(0,"rgba(80,120,255,0)");
-      grad.addColorStop(.25,"rgba(75,170,255,.32)");
-      grad.addColorStop(.72,"rgba(100,220,255,.72)");
-      grad.addColorStop(1,"rgba(255,255,255,.98)");
+      grad.addColorStop(0,"rgba(60,100,255,0)");
+      grad.addColorStop(.16,"rgba(60,150,255,.28)");
+      grad.addColorStop(.60,"rgba(80,210,255,.62)");
+      grad.addColorStop(.88,"rgba(190,250,255,.90)");
+      grad.addColorStop(1,"rgba(255,255,255,1)");
       f.strokeStyle=grad;
-      f.lineWidth=(9+24*swell)*d;
+      f.lineWidth=(14+32*swell)*d;
       f.lineCap="round";
       f.beginPath();f.moveTo(startX,startY);f.lineTo(x+wobble,y);f.stroke();
 
-      // 細い高速ラインを重ね、移動方向を分かりやすくする
-      for(let k=0;k<5;k++){
-        f.globalAlpha=.22+.11*k;
-        f.strokeStyle=k%2?"#b9efff":"#78baff";
-        f.lineWidth=(1.5+k*.5)*d;
-        const yy=y+(k-2)*10*d;
-        f.beginPath();f.moveTo(startX,yy);f.lineTo(x+wobble,yy);f.stroke();
-      }
-      f.globalAlpha=1;
+      // 中心の白い芯
+      f.strokeStyle="rgba(255,255,255,.72)";
+      f.lineWidth=(3+8*swell)*d;
+      f.beginPath();f.moveTo(startX,startY);f.lineTo(x+wobble,y);f.stroke();
     }
 
-    // 外側オーラ
-    const aura=f.createRadialGradient(x+wobble,y,0,x+wobble,y,auraR);
-    aura.addColorStop(0,"rgba(255,255,255,.99)");
-    aura.addColorStop(.12,"rgba(215,250,255,.96)");
-    aura.addColorStop(.30,"rgba(105,220,255,.92)");
-    aura.addColorStop(.55,"rgba(80,125,255,.55)");
-    aura.addColorStop(1,"rgba(50,60,255,0)");
-    f.fillStyle=aura;
-    f.beginPath();f.arc(x+wobble,y,auraR,0,Math.PI*2);f.fill();
+    const coreR=(18+102*swell)*d + Math.sin(now/44)*(3+11*swell)*d;
+    drawEnergySphere(x+wobble,y,coreR,swell,now,burstPrep);
 
-    // 白熱する中心
-    const core=f.createRadialGradient(x+wobble,y,0,x+wobble,y,coreR);
-    core.addColorStop(0,"#ffffff");
-    core.addColorStop(.25,"#eaffff");
-    core.addColorStop(.55,"#83e8ff");
-    core.addColorStop(.82,"rgba(82,120,255,.85)");
-    core.addColorStop(1,"rgba(80,50,255,0)");
-    f.fillStyle=core;
-    f.beginPath();f.arc(x+wobble,y,coreR,0,Math.PI*2);f.fill();
-
-    // 炭酸の泡が中で増える
-    const inner=8+Math.floor(34*swell);
-    f.lineWidth=1.5*d;
-    for(let i=0;i<inner;i++){
-      const ang=i*2.399+now/700*(1+(i%3)*.25);
-      const rr=coreR*(.15+((i*29)%100)/120);
-      const bx=x+wobble+Math.cos(ang)*rr;
-      const by=y+Math.sin(ang)*rr*.74;
-      const br=(1.3+4.5*swell+((i*7)%4))*d;
-      f.globalAlpha=.30+.58*swell;
-      f.strokeStyle=i%3===0?"#ffffff":"#bdefff";
-      f.beginPath();f.arc(bx,by,br,0,Math.PI*2);f.stroke();
-    }
-    f.globalAlpha=1;
-
-    // 周囲へ弾ける炭酸泡
-    if(Math.random()<.55)addBubble(x+wobble,y,2+Math.floor(3*swell),swell);
+    // 炭酸泡の尾
+    if(Math.random()<.72)addBubble(x+wobble,y,3+Math.floor(5*swell),swell);
     for(const b of bubbles){
       if(b.life<=0)continue;
-      b.x+=b.vx;b.y+=b.vy;b.r*=1.018;b.life-=.020;
-      f.globalAlpha=Math.max(0,b.life)*(.35+.55*swell);
-      f.strokeStyle="#ddfaff";f.lineWidth=1.3*d;
+      b.x+=b.vx;b.y+=b.vy;b.r*=1.020;b.life-=.019;
+      f.globalAlpha=Math.max(0,b.life)*(.32+.60*swell);
+      f.strokeStyle=Math.random()>.25?"#e8fdff":"#91eaff";
+      f.lineWidth=1.35*d;
       f.beginPath();f.arc(b.x,b.y,b.r,0,Math.PI*2);f.stroke();
     }
     f.globalAlpha=1;
-
-    // 後半ほど稲妻と点滅を強化
-    if(swell>.45){
-      lightning(x+wobble,y,auraR*(1.08+.30*swell),.18+.72*swell);
-    }
-    if(holdBurst){
-      const q=(p-.82)/.18;
-      f.globalAlpha=.10+.32*Math.abs(Math.sin(now/25))*q;
-      f.fillStyle="#ffffff";
-      f.beginPath();f.arc(x+wobble,y,coreR*(1+.12*Math.sin(now/22)),0,Math.PI*2);f.fill();
-    }
 
     f.restore();
 
     if(p<1){
       requestAnimationFrame(frame);
     }else{
-      // 「膨らみ切る → 炭酸が一気にはじける」の順番を明確にする
       setTimeout(()=>startSodaExplosion(endX,endY,pwr),120);
     }
   }
@@ -530,16 +610,29 @@ function startSodaExplosion(x,y,power){
   const d=devicePixelRatio||1;
   const t0=performance.now();
   const droplets=[];
-  const count=70+Math.floor(95*power);
+  const shards=[];
+  const count=110+Math.floor(120*power);
 
   for(let i=0;i<count;i++){
     const ang=Math.random()*Math.PI*2;
-    const sp=(2.2+Math.random()*(5.5+6*power))*d;
+    const sp=(2.6+Math.random()*(7+7*power))*d;
     droplets.push({
       x,y,
       vx:Math.cos(ang)*sp,
       vy:Math.sin(ang)*sp,
-      r:(1.5+Math.random()*4.5)*d,
+      r:(1.4+Math.random()*5.6)*d,
+      life:1
+    });
+  }
+
+  for(let i=0;i<44;i++){
+    const ang=Math.random()*Math.PI*2;
+    const sp=(4+Math.random()*9)*d;
+    shards.push({
+      x,y,
+      vx:Math.cos(ang)*sp,
+      vy:Math.sin(ang)*sp,
+      len:(10+Math.random()*24)*d,
       life:1
     });
   }
@@ -550,39 +643,71 @@ function startSodaExplosion(x,y,power){
     f.save();
     f.globalCompositeOperation="lighter";
 
-    // 最初に白く「パシュッ」と弾ける
-    if(t<.12){
-      f.globalAlpha=(1-t/.12)*(.55+.30*power);
-      f.fillStyle="#ffffff";
+    // MAX時は画面全体を一瞬白く
+    if(t<.15){
+      const a=(1-t/.15)*(.65+.25*power);
+      f.fillStyle=`rgba(255,255,255,${a})`;
       f.fillRect(0,0,F.width,F.height);
     }
 
-    // 爆発の中心リング
-    const prog=Math.min(1,t/.62);
-    const R=(30+Math.hypot(F.width,F.height)*(.22+.38*power)*prog);
-    f.globalAlpha=Math.max(0,1-t/.85);
-    f.strokeStyle="#dffcff";
-    f.lineWidth=(8-4*prog)*d;
-    f.beginPath();f.arc(x,y,R,0,Math.PI*2);f.stroke();
+    // 青い衝撃波リング 3枚
+    for(let k=0;k<3;k++){
+      const prog=Math.max(0,Math.min(1,(t-k*.06)/(.60+k*.08)));
+      if(prog<=0)continue;
+      const R=(35+Math.hypot(F.width,F.height)*(.20+.20*k+.16*power)*prog);
+      f.globalAlpha=Math.max(0,1-t/(.85+k*.12))*(.70-.12*k);
+      f.strokeStyle=k===0?"#ffffff":k===1?"#86ebff":"#7c8cff";
+      f.lineWidth=(10-2*k)*(1-prog*.45)*d;
+      f.beginPath();f.arc(x,y,R,0,Math.PI*2);f.stroke();
+    }
 
-    // 炭酸の泡・しぶき
+    // 中心爆発
+    const coreProg=Math.min(1,t/.42);
+    const coreR=(40+240*coreProg*(.65+.55*power))*d;
+    const g=f.createRadialGradient(x,y,0,x,y,coreR);
+    g.addColorStop(0,"rgba(255,255,255,1)");
+    g.addColorStop(.16,"rgba(210,255,255,.96)");
+    g.addColorStop(.38,"rgba(95,220,255,.78)");
+    g.addColorStop(.62,"rgba(80,120,255,.45)");
+    g.addColorStop(1,"rgba(80,60,255,0)");
+    f.globalAlpha=Math.max(0,1-t/1.0);
+    f.fillStyle=g;
+    f.beginPath();f.arc(x,y,coreR,0,Math.PI*2);f.fill();
+    f.globalAlpha=1;
+
+    // 炭酸泡
     for(const s of droplets){
       if(s.life<=0)continue;
       s.x+=s.vx;s.y+=s.vy;
-      s.vx*=.985;s.vy*=.985;
-      s.vy+=.018*d;
-      s.r*=1.01;
-      s.life-=.020;
+      s.vx*=.982;s.vy*=.982;
+      s.vy+=.022*d;
+      s.r*=1.014;
+      s.life-=.018;
       f.globalAlpha=Math.max(0,s.life);
-      f.strokeStyle=Math.random()>.35?"#ffffff":"#8de9ff";
-      f.lineWidth=1.4*d;
+      f.strokeStyle=Math.random()>.25?"#ffffff":"#8eefff";
+      f.lineWidth=1.5*d;
       f.beginPath();f.arc(s.x,s.y,s.r,0,Math.PI*2);f.stroke();
     }
 
-    lightning(x,y,Math.min(R*1.08,Math.max(F.width,F.height)*.72),Math.max(0,1-t/1.1)*(.45+.55*power));
+    // 光の破片
+    for(const s of shards){
+      if(s.life<=0)continue;
+      s.x+=s.vx;s.y+=s.vy;
+      s.vx*=.975;s.vy*=.975;
+      s.life-=.025;
+      f.globalAlpha=Math.max(0,s.life);
+      f.strokeStyle=Math.random()>.4?"#ffffff":"#7edfff";
+      f.lineWidth=2*d;
+      f.beginPath();
+      f.moveTo(s.x,s.y);
+      f.lineTo(s.x-s.vx*s.len/12,s.y-s.vy*s.len/12);
+      f.stroke();
+    }
+
+    lightning(x,y,Math.min(coreR*1.15,Math.max(F.width,F.height)*.76),Math.max(0,1-t/1.15)*(.50+.50*power));
     f.restore();
 
-    if(t<1.25){
+    if(t<1.45){
       requestAnimationFrame(burst);
     }else{
       f.clearRect(0,0,F.width,F.height);
@@ -592,6 +717,7 @@ function startSodaExplosion(x,y,power){
       startFireworks(power);
     }
   }
+
   requestAnimationFrame(burst);
 }
 
