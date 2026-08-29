@@ -58,8 +58,8 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 @media(max-width:900px){main{grid-template-columns:1fr}.side{display:none}}
 
 #fighterWrap{
-  display:none;position:absolute;z-index:14;right:20px;bottom:28px;
-  width:min(285px,24vw);pointer-events:none;transform-origin:70% 70%;
+  display:none;position:absolute;z-index:14;right:18px;bottom:10px;
+  width:min(320px,27vw);pointer-events:none;transform-origin:70% 70%;
   filter:drop-shadow(0 0 14px rgba(255,168,30,.75));
 }
 #fighterWrap.show{display:block;animation:fighterEnter .38s cubic-bezier(.2,.9,.25,1.25) both}
@@ -84,8 +84,8 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   to{opacity:1;transform:scale(1.05);transform-origin:133px 122px}
 }
 @keyframes fighterCorePulse{
-  from{opacity:.72;transform:scale(.90);transform-origin:-8px 217px}
-  to{opacity:1;transform:scale(1.18);transform-origin:-8px 217px}
+  from{opacity:.72;transform:scale(.90);transform-origin:-10px 181px}
+  to{opacity:1;transform:scale(1.18);transform-origin:-10px 181px}
 }
 @media(max-width:900px){
   #fighterWrap{width:min(220px,33vw);right:6px;bottom:20px}
@@ -190,7 +190,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   <div id="shout">ぱっしゃぁーーーっ、<br>じゃーーーっ！！！</div>
 
 
-  <div id="fireHint">両手を前に出して<br><strong>発射！！</strong></div>
+  <div id="fireHint">両手を前に出して、<br><strong>発射じゃ！！</strong></div>
 
   <div id="fighterWrap" aria-label="発射するみかん君">
     <svg id="fighterSvg" viewBox="0 0 240 300" role="img" aria-label="道着を着て両手でエネルギーを放つみかん君">
@@ -246,20 +246,20 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 
       <!-- back arm -->
       <g stroke="#7d4a24" stroke-width="3">
-        <path d="M109 144 Q76 160 48 185 Q30 199 14 207" fill="none" stroke="#f1bf8e" stroke-width="20" stroke-linecap="round"/>
-        <ellipse cx="12" cy="208" rx="17" ry="24" fill="#ffd4ab"/>
+        <path d="M112 157 Q83 165 56 170 Q34 174 14 176" fill="none" stroke="#f1bf8e" stroke-width="20" stroke-linecap="round"/>
+        <ellipse cx="12" cy="176" rx="17" ry="24" fill="#ffd4ab"/>
       </g>
 
       <!-- front arm -->
       <g stroke="#7d4a24" stroke-width="3">
-        <path d="M128 153 Q88 170 55 198 Q34 216 14 226" fill="none" stroke="#f1bf8e" stroke-width="21" stroke-linecap="round"/>
-        <ellipse cx="12" cy="227" rx="17" ry="24" fill="#ffd4ab"/>
+        <path d="M129 170 Q90 176 58 180 Q35 183 14 185" fill="none" stroke="#f1bf8e" stroke-width="21" stroke-linecap="round"/>
+        <ellipse cx="12" cy="185" rx="17" ry="24" fill="#ffd4ab"/>
       </g>
 
       <!-- fingers, palm aimed left -->
       <g stroke="#8d5732" stroke-width="3" stroke-linecap="round">
-        <path d="M14 185 L1 178"/><path d="M17 191 L1 189"/><path d="M17 198 L1 200"/><path d="M18 205 L3 211"/>
-        <path d="M14 208 L0 201"/><path d="M17 216 L0 216"/><path d="M17 224 L2 230"/><path d="M19 231 L7 240"/>
+        <path d="M10 162 L-4 154"/><path d="M12 168 L-5 165"/><path d="M12 175 L-5 175"/><path d="M12 182 L-4 186"/>
+        <path d="M10 171 L-6 165"/><path d="M12 178 L-6 178"/><path d="M12 185 L-5 190"/><path d="M14 192 L0 199"/>
       </g>
 
       <!-- orange head -->
@@ -269,40 +269,40 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
       <path d="M123 31 Q98 5 78 23 Q95 42 124 36Z" fill="#70c53d" stroke="#2f6f1d" stroke-width="4"/>
       <path d="M137 31 Q158 4 184 22 Q162 43 138 36Z" fill="#82d649" stroke="#2f6f1d" stroke-width="4"/>
 
-      <!-- 斜め横向き戦闘顔：左を向いて発射 -->
-      <path d="M101 74 Q113 64 126 72" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
-      <path d="M137 76 Q148 68 158 73" fill="none" stroke="#5b2200" stroke-width="5" stroke-linecap="round" opacity=".82"/>
+      <!-- イメージ図寄せ：左向きの斜め横顔 -->
+      <path d="M98 75 Q112 63 126 72" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
+      <path d="M132 77 Q143 69 153 75" fill="none" stroke="#5b2200" stroke-width="5" stroke-linecap="round" opacity=".85"/>
 
-      <!-- 手前側の目 -->
-      <ellipse cx="113" cy="89" rx="9" ry="11" fill="#fff"/>
-      <circle cx="109" cy="91" r="4" fill="#251300"/>
+      <!-- 手前の目 -->
+      <ellipse cx="111" cy="90" rx="10" ry="12" fill="#fff"/>
+      <circle cx="106" cy="92" r="4.3" fill="#251300"/>
 
-      <!-- 奥側の右目：少し小さくして斜め横顔感を出す -->
-      <ellipse cx="148" cy="90" rx="7" ry="9" fill="#fff" opacity=".94"/>
-      <circle cx="145" cy="92" r="3.4" fill="#251300"/>
+      <!-- 奥側の右目：顔の中心寄りに配置 -->
+      <ellipse cx="139" cy="91" rx="7.2" ry="9.2" fill="#fff" opacity=".95"/>
+      <circle cx="135.5" cy="93" r="3.4" fill="#251300"/>
 
-      <!-- 小さな耳 -->
-      <ellipse cx="183" cy="101" rx="10" ry="14" fill="#f08b18" stroke="#7a3500" stroke-width="3"/>
-      <ellipse cx="183" cy="102" rx="5" ry="8" fill="#ffb14d" opacity=".72"/>
+      <!-- 耳：頭の右端に小さく -->
+      <ellipse cx="184" cy="104" rx="10" ry="14" fill="#f08b18" stroke="#7a3500" stroke-width="3"/>
+      <ellipse cx="184" cy="104" rx="5" ry="8" fill="#ffb14d" opacity=".72"/>
 
-      <!-- 横顔の鼻先 -->
-      <path d="M93 94 Q80 98 74 106 Q85 110 96 106" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
+      <!-- 左向きの鼻 -->
+      <path d="M93 96 Q82 98 75 105 Q84 109 96 106" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
 
       <!-- 頬 -->
-      <circle cx="103" cy="113" r="11" fill="#ff6e45" opacity=".55"/>
-      <circle cx="164" cy="109" r="8" fill="#ff6e45" opacity=".35"/>
+      <circle cx="101" cy="114" r="11" fill="#ff6e45" opacity=".55"/>
+      <circle cx="158" cy="111" r="7" fill="#ff6e45" opacity=".28"/>
 
       <!-- 左向きに叫ぶ口 -->
-      <path d="M98 118 Q85 110 77 118 Q79 137 95 141 Q105 136 106 124Z"
+      <path d="M97 120 Q85 112 77 119 Q80 137 95 141 Q105 136 105 125Z"
             fill="#7b1d05" stroke="#4d1705" stroke-width="4"/>
-      <path d="M82 119 Q91 116 99 121" stroke="#fff" stroke-width="4" fill="none"/>
-      <path d="M82 135 Q91 129 99 135" fill="#ff8b75"/>
+      <path d="M82 120 Q91 117 99 122" stroke="#fff" stroke-width="4" fill="none"/>
+      <path d="M82 135 Q91 130 99 135" fill="#ff8b75"/>
 
       <!-- energy core at both hands -->
       <g id="fighterCore" filter="url(#fwGlow)">
-        <circle cx="-8" cy="217" r="38" fill="none" stroke="#83efff" stroke-width="7" opacity=".55"/>
-        <circle cx="-8" cy="217" r="26" fill="#9fefff" opacity=".40"/>
-        <circle cx="-8" cy="217" r="15" fill="#fff"/>
+        <circle cx="-10" cy="181" r="38" fill="none" stroke="#83efff" stroke-width="7" opacity=".55"/>
+        <circle cx="-10" cy="181" r="26" fill="#9fefff" opacity=".40"/>
+        <circle cx="-10" cy="181" r="15" fill="#fff"/>
         <g stroke="#dffcff" stroke-width="3">
           <path d="M3 162 L3 183"/><path d="M3 237 L3 258"/>
           <path d="M-45 210 L-23 210"/><path d="M29 210 L51 210"/>
@@ -500,13 +500,13 @@ function updateCharge(){
         "ほっほっほ。もっとパワーをためるのじゃ〜。<br>おててのなかに、おいしさが……<b>うる、るん、るん、るん……</b>",
         "いいぞ、いいぞ〜。<br>みかんの果汁パワーが、だんだん濃くなってきたぞい。",
         "もうひと息じゃ。<br>やさしく、じっくり……もっとパワーをためておくれ。",
-        "よし！十分たまった！<br><span style='color:#e94b00;font-size:27px;text-shadow:0 0 8px #ffd36a'>今じゃ！両手を前に出して、放て！！</span>"
+        "よし！十分たまった！<br><span style='color:#e94b00;font-size:27px;text-shadow:0 0 8px #ffd36a'>今じゃ！両手を前に出して、発射じゃ！！</span>"
       ];
       const voices=[
         "もっとパワーをためるのじゃ。おててのなかに、おいしさが、うる、るん、るん、るん。",
         "いいぞ、いいぞ。みかんの果汁パワーが、だんだん濃くなってきたぞい。",
         "もうひと息じゃ。やさしく、じっくり、もっとパワーをためておくれ。",
-        "よし。十分たまった。今じゃ、両手を前に出して、放て。"
+        "よし。十分たまった。今じゃ、両手を前に出して、発射じゃ。"
       ];
       sageMessage.innerHTML=msgs[next];speak(voices[next]);beep(520+next*90,.14,.04,"sine");
     }
@@ -597,7 +597,7 @@ function drawChargeFX(){
   for(let i=0;i<rings;i++){
     const rr=coreR*(1.10+i*.20)+(Math.sin(t*4+i)*5*d);
     f.globalAlpha=.16+.42*power;
-    f.strokeStyle=i%2===0?"#ffffff":"#91baff";
+    f.strokeStyle=i%2===0?"rgba(255,255,255,.82)":"rgba(145,186,255,.72)";
     f.lineWidth=(1.5+5*power)*d;
     f.beginPath();f.arc(q.x,q.y,rr,0,Math.PI*2);f.stroke();
   }
