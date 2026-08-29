@@ -269,24 +269,25 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
       <path d="M123 31 Q98 5 78 23 Q95 42 124 36Z" fill="#70c53d" stroke="#2f6f1d" stroke-width="4"/>
       <path d="M137 31 Q158 4 184 22 Q162 43 138 36Z" fill="#82d649" stroke="#2f6f1d" stroke-width="4"/>
 
-      <!-- angry eyebrows -->
-      <path d="M95 76 Q109 65 122 75 M145 75 Q159 65 174 76" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
+      <!-- 横向き戦闘顔：左を向いて発射 -->
+      <path d="M104 74 Q116 64 128 72" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="115" cy="89" rx="9" ry="11" fill="#fff"/>
+      <circle cx="111" cy="91" r="4" fill="#251300"/>
 
-      <!-- eyes -->
-      <ellipse cx="110" cy="89" rx="8" ry="10" fill="#fff"/>
-      <ellipse cx="158" cy="89" rx="8" ry="10" fill="#fff"/>
-      <circle cx="112" cy="91" r="4" fill="#251300"/>
-      <circle cx="156" cy="91" r="4" fill="#251300"/>
+      <!-- 横顔の鼻先 -->
+      <path d="M92 94 Q79 98 73 106 Q84 110 95 106" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
 
-      <!-- cheeks -->
-      <circle cx="88" cy="111" r="12" fill="#ff6e45" opacity=".55"/>
-      <circle cx="180" cy="111" r="12" fill="#ff6e45" opacity=".55"/>
+      <!-- 頬 -->
+      <circle cx="102" cy="113" r="11" fill="#ff6e45" opacity=".55"/>
 
-      <!-- shouting mouth -->
-      <path d="M113 113 Q133 96 153 113 Q151 142 133 146 Q116 141 113 113Z"
+      <!-- 左向きに叫ぶ口 -->
+      <path d="M97 118 Q84 110 76 118 Q78 137 94 141 Q104 136 105 124Z"
             fill="#7b1d05" stroke="#4d1705" stroke-width="4"/>
-      <path d="M121 118 Q133 113 145 118" stroke="#fff" stroke-width="5" fill="none"/>
-      <path d="M122 138 Q133 130 144 138" fill="#ff8b75"/>
+      <path d="M81 119 Q90 116 98 121" stroke="#fff" stroke-width="4" fill="none"/>
+      <path d="M81 135 Q90 129 98 135" fill="#ff8b75"/>
+
+      <!-- 反対側の目は横顔なので小さく -->
+      <path d="M142 89 Q150 86 157 89" fill="none" stroke="#5a2a00" stroke-width="3" opacity=".55"/>
 
       <!-- energy core at both hands -->
       <g id="fighterCore" filter="url(#fwGlow)">
@@ -563,21 +564,21 @@ function drawChargeFX(){
   f.globalCompositeOperation="lighter";
 
   const aura=f.createRadialGradient(q.x,q.y,0,q.x,q.y,auraR);
-  aura.addColorStop(0,"rgba(255,255,255,.98)");
-  aura.addColorStop(.10,"rgba(224,253,255,.96)");
-  aura.addColorStop(.28,"rgba(100,220,255,.90)");
-  aura.addColorStop(.52,"rgba(70,130,255,.58)");
-  aura.addColorStop(.74,"rgba(130,90,255,.34)");
+  aura.addColorStop(0,"rgba(255,255,255,.42)");
+  aura.addColorStop(.10,"rgba(224,253,255,.30)");
+  aura.addColorStop(.28,"rgba(100,220,255,.24)");
+  aura.addColorStop(.52,"rgba(70,130,255,.16)");
+  aura.addColorStop(.74,"rgba(130,90,255,.10)");
   aura.addColorStop(1,"rgba(30,50,255,0)");
   f.fillStyle=aura;
   f.beginPath();f.arc(q.x,q.y,auraR,0,Math.PI*2);f.fill();
 
   const core=f.createRadialGradient(q.x,q.y,0,q.x,q.y,coreR);
-  core.addColorStop(0,"#ffffff");
-  core.addColorStop(.20,"#ecffff");
-  core.addColorStop(.45,"#8ee9ff");
-  core.addColorStop(.70,"#5c9cff");
-  core.addColorStop(.88,"rgba(105,70,255,.84)");
+  core.addColorStop(0,"rgba(255,255,255,.58)");
+  core.addColorStop(.20,"rgba(236,255,255,.30)");
+  core.addColorStop(.45,"rgba(142,233,255,.22)");
+  core.addColorStop(.70,"rgba(92,156,255,.16)");
+  core.addColorStop(.88,"rgba(105,70,255,.10)");
   core.addColorStop(1,"rgba(70,45,255,0)");
   f.fillStyle=core;
   f.beginPath();f.arc(q.x,q.y,coreR,0,Math.PI*2);f.fill();
@@ -586,7 +587,7 @@ function drawChargeFX(){
   const rings=Math.max(1,Math.ceil(chargeSeconds/2));
   for(let i=0;i<rings;i++){
     const rr=coreR*(1.10+i*.20)+(Math.sin(t*4+i)*5*d);
-    f.globalAlpha=.24+.62*power;
+    f.globalAlpha=.16+.42*power;
     f.strokeStyle=i%2===0?"#ffffff":"#91baff";
     f.lineWidth=(1.5+5*power)*d;
     f.beginPath();f.arc(q.x,q.y,rr,0,Math.PI*2);f.stroke();
@@ -600,7 +601,7 @@ function drawChargeFX(){
     const bx=q.x+Math.cos(ang)*orbit;
     const by=q.y+Math.sin(ang)*orbit*.76;
     const br=(1.2+power*5.2+((i*11)%4))*d;
-    f.globalAlpha=.24+.62*power;
+    f.globalAlpha=.14+.36*power;
     f.strokeStyle=i%3===0?"#ffffff":i%3===1?"#bfefff":"#95b9ff";
     f.lineWidth=(1+1.2*power)*d;
     f.beginPath();f.arc(bx,by,br,0,Math.PI*2);f.stroke();
@@ -614,7 +615,7 @@ function drawChargeFX(){
     const px=q.x+Math.cos(ang)*rr;
     const py=q.y+Math.sin(ang)*rr*.74;
     const pr=(1+power*3.8+((i*7)%3))*d;
-    f.globalAlpha=.22+.58*power;
+    f.globalAlpha=.14+.34*power;
     f.fillStyle=i%4===0?"#ffffff":i%4===1?"#80e8ff":i%4===2?"#8ea9ff":"#b892ff";
     f.beginPath();f.arc(px,py,pr,0,Math.PI*2);f.fill();
   }
@@ -624,12 +625,23 @@ function drawChargeFX(){
   // 8秒以降は白熱、10秒で最大感
   if(chargeSeconds>=8){
     const hot=.5+.5*Math.abs(Math.sin(t*11));
-    f.globalAlpha=.10+.32*hot*power;
+    f.globalAlpha=.06+.18*hot*power;
     f.fillStyle="#ffffff";
     f.beginPath();
     f.arc(q.x,q.y,coreR*(1.02+.10*hot),0,Math.PI*2);
     f.fill();
   }
+
+
+  // 手元が見えるよう、中心は透明感を優先
+  f.globalCompositeOperation="source-over";
+  const holeR=coreR*.52;
+  const hole=f.createRadialGradient(q.x,q.y,0,q.x,q.y,holeR);
+  hole.addColorStop(0,"rgba(0,0,0,0)");
+  hole.addColorStop(.72,"rgba(0,0,0,0)");
+  hole.addColorStop(1,"rgba(0,0,0,.02)");
+  f.fillStyle=hole;
+  f.beginPath();f.arc(q.x,q.y,holeR,0,Math.PI*2);f.fill();
 
   f.restore();
 }
