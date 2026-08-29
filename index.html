@@ -84,8 +84,8 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   to{opacity:1;transform:scale(1.05);transform-origin:133px 122px}
 }
 @keyframes fighterCorePulse{
-  from{opacity:.72;transform:scale(.90);transform-origin:-10px 181px}
-  to{opacity:1;transform:scale(1.18);transform-origin:-10px 181px}
+  from{opacity:.72;transform:scale(.90);transform-origin:-12px 174px}
+  to{opacity:1;transform:scale(1.18);transform-origin:-12px 174px}
 }
 @media(max-width:900px){
   #fighterWrap{width:min(220px,33vw);right:6px;bottom:20px}
@@ -193,7 +193,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   <div id="fireHint">両手を前に出して、<br><strong>発射じゃ！！</strong></div>
 
   <div id="fighterWrap" aria-label="発射するみかん君">
-    <svg id="fighterSvg" viewBox="0 0 240 300" role="img" aria-label="道着を着て両手でエネルギーを放つみかん君">
+    <svg id="fighterSvg" viewBox="-40 0 280 300" role="img" aria-label="道着を着て両手でエネルギーを放つみかん君">
       <defs>
         <radialGradient id="fwOrange" cx="35%" cy="28%">
           <stop offset="0%" stop-color="#fff08a"/>
@@ -228,12 +228,33 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
         </g>
       </g>
 
-      <!-- legs / stance -->
+      <!-- legs / stance：片足を曲げて膝を強調 -->
       <g stroke="#5a452c" stroke-width="4" stroke-linejoin="round">
-        <path d="M106 193 Q90 225 67 255 L104 262 Q124 238 136 212 Z" fill="url(#fwGi)"/>
-        <path d="M143 196 Q160 223 184 253 L150 264 Q133 240 124 213 Z" fill="url(#fwGi)"/>
-        <path d="M61 254 Q84 249 105 260 L102 274 Q76 280 54 267 Z" fill="#2a2520"/>
-        <path d="M151 260 Q174 248 195 254 L198 268 Q176 280 151 273 Z" fill="#2a2520"/>
+        <!-- 前足：左へ踏み込む。膝を軽く曲げる -->
+        <path d="M108 194
+                 Q92 205 79 222
+                 Q66 239 56 255
+                 L92 266
+                 Q105 248 118 234
+                 Q130 220 138 205 Z"
+              fill="url(#fwGi)"/>
+        <!-- 前足の膝ライン -->
+        <path d="M82 221 Q96 229 111 226" fill="none" stroke="#b89e77" stroke-width="4"/>
+
+        <!-- 後ろ足：右脚をしっかり曲げて踏ん張る -->
+        <path d="M143 198
+                 Q160 205 172 221
+                 Q184 235 198 246
+                 L174 269
+                 Q155 258 143 246
+                 Q128 232 122 212 Z"
+              fill="url(#fwGi)"/>
+        <!-- 後ろ足の膝を明確に -->
+        <path d="M160 221 Q173 226 181 238" fill="none" stroke="#b89e77" stroke-width="4"/>
+
+        <!-- 足 -->
+        <path d="M53 254 Q75 249 94 261 L91 275 Q69 280 47 268 Z" fill="#2a2520"/>
+        <path d="M173 259 Q190 249 207 253 L211 267 Q193 279 174 273 Z" fill="#2a2520"/>
       </g>
 
       <!-- torso -->
@@ -244,22 +265,30 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
             fill="url(#fwBelt)" stroke="#152815" stroke-width="3"/>
       <path d="M126 191 L141 191 L137 222 L123 222 Z" fill="#172817"/>
 
-      <!-- back arm -->
+      <!-- back arm：胸の下あたりから水平に伸ばす -->
       <g stroke="#7d4a24" stroke-width="3">
-        <path d="M112 157 Q83 165 56 170 Q34 174 14 176" fill="none" stroke="#f1bf8e" stroke-width="20" stroke-linecap="round"/>
-        <ellipse cx="12" cy="176" rx="17" ry="24" fill="#ffd4ab"/>
+        <path d="M113 157
+                 Q86 162 58 166
+                 Q35 168 18 168"
+              fill="none" stroke="#f1bf8e" stroke-width="20" stroke-linecap="round"/>
+        <!-- 奥側の手のひら：腕に対して90度 -->
+        <ellipse cx="10" cy="168" rx="10" ry="24" fill="#ffd4ab" transform="rotate(0 10 168)"/>
       </g>
 
-      <!-- front arm -->
+      <!-- front arm：胸の下あたりから水平に伸ばす -->
       <g stroke="#7d4a24" stroke-width="3">
-        <path d="M129 170 Q90 176 58 180 Q35 183 14 185" fill="none" stroke="#f1bf8e" stroke-width="21" stroke-linecap="round"/>
-        <ellipse cx="12" cy="185" rx="17" ry="24" fill="#ffd4ab"/>
+        <path d="M127 170
+                 Q92 174 60 177
+                 Q37 179 18 179"
+              fill="none" stroke="#f1bf8e" stroke-width="21" stroke-linecap="round"/>
+        <!-- 手前側の手のひら：腕に対して90度 -->
+        <ellipse cx="10" cy="179" rx="10" ry="25" fill="#ffd4ab" transform="rotate(0 10 179)"/>
       </g>
 
-      <!-- fingers, palm aimed left -->
+      <!-- 指：手のひらを縦向きに見せる -->
       <g stroke="#8d5732" stroke-width="3" stroke-linecap="round">
-        <path d="M10 162 L-4 154"/><path d="M12 168 L-5 165"/><path d="M12 175 L-5 175"/><path d="M12 182 L-4 186"/>
-        <path d="M10 171 L-6 165"/><path d="M12 178 L-6 178"/><path d="M12 185 L-5 190"/><path d="M14 192 L0 199"/>
+        <path d="M8 146 L8 155"/><path d="M13 147 L13 156"/><path d="M18 149 L18 157"/><path d="M23 153 L23 160"/>
+        <path d="M8 157 L8 166"/><path d="M13 158 L13 167"/><path d="M18 160 L18 168"/><path d="M23 164 L23 171"/>
       </g>
 
       <!-- orange head -->
@@ -270,39 +299,39 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
       <path d="M137 31 Q158 4 184 22 Q162 43 138 36Z" fill="#82d649" stroke="#2f6f1d" stroke-width="4"/>
 
       <!-- イメージ図寄せ：左向きの斜め横顔 -->
-      <path d="M98 75 Q112 63 126 72" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
-      <path d="M132 77 Q143 69 153 75" fill="none" stroke="#5b2200" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+      <path d="M96 76 Q109 65 123 73" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
+      <path d="M132 77 Q143 69 154 75" fill="none" stroke="#5b2200" stroke-width="5" stroke-linecap="round" opacity=".86"/>
 
-      <!-- 手前の目 -->
-      <ellipse cx="111" cy="90" rx="10" ry="12" fill="#fff"/>
-      <circle cx="106" cy="92" r="4.3" fill="#251300"/>
+      <!-- 手前側の左目 -->
+      <ellipse cx="109" cy="91" rx="10" ry="12" fill="#fff"/>
+      <circle cx="104.5" cy="93" r="4.2" fill="#251300"/>
 
-      <!-- 奥側の右目：顔の中心寄りに配置 -->
-      <ellipse cx="139" cy="91" rx="7.2" ry="9.2" fill="#fff" opacity=".95"/>
-      <circle cx="135.5" cy="93" r="3.4" fill="#251300"/>
+      <!-- 奥側の右目：少し小さく、顔の中心寄り -->
+      <ellipse cx="139" cy="92" rx="7.5" ry="9.5" fill="#fff" opacity=".96"/>
+      <circle cx="135.5" cy="94" r="3.5" fill="#251300"/>
 
-      <!-- 耳：頭の右端に小さく -->
-      <ellipse cx="184" cy="104" rx="10" ry="14" fill="#f08b18" stroke="#7a3500" stroke-width="3"/>
-      <ellipse cx="184" cy="104" rx="5" ry="8" fill="#ffb14d" opacity=".72"/>
+      <!-- 耳：頭の右端中央に小さく配置 -->
+      <ellipse cx="185" cy="103" rx="10" ry="14" fill="#f08b18" stroke="#7a3500" stroke-width="3"/>
+      <ellipse cx="185" cy="103" rx="5" ry="8" fill="#ffb14d" opacity=".72"/>
 
       <!-- 左向きの鼻 -->
-      <path d="M93 96 Q82 98 75 105 Q84 109 96 106" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
+      <path d="M92 97 Q81 99 74 106 Q84 110 95 107" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
 
       <!-- 頬 -->
-      <circle cx="101" cy="114" r="11" fill="#ff6e45" opacity=".55"/>
-      <circle cx="158" cy="111" r="7" fill="#ff6e45" opacity=".28"/>
+      <circle cx="100" cy="114" r="11" fill="#ff6e45" opacity=".55"/>
+      <circle cx="160" cy="111" r="7" fill="#ff6e45" opacity=".28"/>
 
       <!-- 左向きに叫ぶ口 -->
-      <path d="M97 120 Q85 112 77 119 Q80 137 95 141 Q105 136 105 125Z"
+      <path d="M96 120 Q84 112 76 119 Q79 137 94 141 Q104 136 104 125Z"
             fill="#7b1d05" stroke="#4d1705" stroke-width="4"/>
-      <path d="M82 120 Q91 117 99 122" stroke="#fff" stroke-width="4" fill="none"/>
-      <path d="M82 135 Q91 130 99 135" fill="#ff8b75"/>
+      <path d="M81 120 Q90 117 98 122" stroke="#fff" stroke-width="4" fill="none"/>
+      <path d="M81 135 Q90 130 98 135" fill="#ff8b75"/>
 
       <!-- energy core at both hands -->
       <g id="fighterCore" filter="url(#fwGlow)">
-        <circle cx="-10" cy="181" r="38" fill="none" stroke="#83efff" stroke-width="7" opacity=".55"/>
-        <circle cx="-10" cy="181" r="26" fill="#9fefff" opacity=".40"/>
-        <circle cx="-10" cy="181" r="15" fill="#fff"/>
+        <circle cx="-12" cy="174" r="38" fill="none" stroke="#83efff" stroke-width="7" opacity=".55"/>
+        <circle cx="-12" cy="174" r="26" fill="#9fefff" opacity=".40"/>
+        <circle cx="-12" cy="174" r="15" fill="#fff"/>
         <g stroke="#dffcff" stroke-width="3">
           <path d="M3 162 L3 183"/><path d="M3 237 L3 258"/>
           <path d="M-45 210 L-23 210"/><path d="M29 210 L51 210"/>
