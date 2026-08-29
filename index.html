@@ -269,25 +269,34 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
       <path d="M123 31 Q98 5 78 23 Q95 42 124 36Z" fill="#70c53d" stroke="#2f6f1d" stroke-width="4"/>
       <path d="M137 31 Q158 4 184 22 Q162 43 138 36Z" fill="#82d649" stroke="#2f6f1d" stroke-width="4"/>
 
-      <!-- 横向き戦闘顔：左を向いて発射 -->
-      <path d="M104 74 Q116 64 128 72" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
-      <ellipse cx="115" cy="89" rx="9" ry="11" fill="#fff"/>
-      <circle cx="111" cy="91" r="4" fill="#251300"/>
+      <!-- 斜め横向き戦闘顔：左を向いて発射 -->
+      <path d="M101 74 Q113 64 126 72" fill="none" stroke="#5b2200" stroke-width="7" stroke-linecap="round"/>
+      <path d="M137 76 Q148 68 158 73" fill="none" stroke="#5b2200" stroke-width="5" stroke-linecap="round" opacity=".82"/>
+
+      <!-- 手前側の目 -->
+      <ellipse cx="113" cy="89" rx="9" ry="11" fill="#fff"/>
+      <circle cx="109" cy="91" r="4" fill="#251300"/>
+
+      <!-- 奥側の右目：少し小さくして斜め横顔感を出す -->
+      <ellipse cx="148" cy="90" rx="7" ry="9" fill="#fff" opacity=".94"/>
+      <circle cx="145" cy="92" r="3.4" fill="#251300"/>
+
+      <!-- 小さな耳 -->
+      <ellipse cx="183" cy="101" rx="10" ry="14" fill="#f08b18" stroke="#7a3500" stroke-width="3"/>
+      <ellipse cx="183" cy="102" rx="5" ry="8" fill="#ffb14d" opacity=".72"/>
 
       <!-- 横顔の鼻先 -->
-      <path d="M92 94 Q79 98 73 106 Q84 110 95 106" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
+      <path d="M93 94 Q80 98 74 106 Q85 110 96 106" fill="#f18416" stroke="#7a3500" stroke-width="3"/>
 
       <!-- 頬 -->
-      <circle cx="102" cy="113" r="11" fill="#ff6e45" opacity=".55"/>
+      <circle cx="103" cy="113" r="11" fill="#ff6e45" opacity=".55"/>
+      <circle cx="164" cy="109" r="8" fill="#ff6e45" opacity=".35"/>
 
       <!-- 左向きに叫ぶ口 -->
-      <path d="M97 118 Q84 110 76 118 Q78 137 94 141 Q104 136 105 124Z"
+      <path d="M98 118 Q85 110 77 118 Q79 137 95 141 Q105 136 106 124Z"
             fill="#7b1d05" stroke="#4d1705" stroke-width="4"/>
-      <path d="M81 119 Q90 116 98 121" stroke="#fff" stroke-width="4" fill="none"/>
-      <path d="M81 135 Q90 129 98 135" fill="#ff8b75"/>
-
-      <!-- 反対側の目は横顔なので小さく -->
-      <path d="M142 89 Q150 86 157 89" fill="none" stroke="#5a2a00" stroke-width="3" opacity=".55"/>
+      <path d="M82 119 Q91 116 99 121" stroke="#fff" stroke-width="4" fill="none"/>
+      <path d="M82 135 Q91 129 99 135" fill="#ff8b75"/>
 
       <!-- energy core at both hands -->
       <g id="fighterCore" filter="url(#fwGlow)">
