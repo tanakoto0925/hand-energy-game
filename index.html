@@ -71,7 +71,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
   <button id="start">📷 カメラを開始</button><div id="diag">AIライブラリ確認中…</div>
   <div id="chargeText">チャージ中</div>
   <div id="chargePanel">
-    <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span><span id="chargePower">0%</span>　<span id="chargeTime">0.0 秒</span></span></div>
+    <div id="chargeTop"><span>🍊 みかん果汁パワー</span><span id="chargeTime">0.0 秒</span></div>
     <div id="meter"><div id="meterFill"></div></div>
     <div id="levelMarks"><span>0秒</span><span>2秒</span><span>4秒</span><span>6秒</span><span>8秒</span><span>10秒 MAX</span></div>
   </div>
@@ -101,7 +101,7 @@ footer{text-align:center;padding:7px;border-top:1px solid #0a79c455;background:#
 const V=document.getElementById("video"),C=document.getElementById("view"),F=document.getElementById("fx");
 const c=C.getContext("2d"),f=F.getContext("2d"),L=document.createElement("canvas"),l=L.getContext("2d");
 const start=document.getElementById("start"),diag=document.getElementById("diag"),statusEl=document.getElementById("status"),
-chargeText=document.getElementById("chargeText"),chargePanel=document.getElementById("chargePanel"),chargeTimeEl=document.getElementById("chargeTime"),chargePowerEl=document.getElementById("chargePower"),
+chargeText=document.getElementById("chargeText"),chargePanel=document.getElementById("chargePanel"),chargeTimeEl=document.getElementById("chargeTime"),
 meterFill=document.getElementById("meterFill"),err=document.getElementById("error"),steps=[...document.querySelectorAll(".step")],
 sageWrap=document.getElementById("sageWrap"),sageMessage=document.getElementById("sageMessage"),shout=document.getElementById("shout");
 
@@ -247,7 +247,7 @@ function drawPrivacy(){
 
 function beginCharge(){
   chargeStart=performance.now();chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;
-  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";chargePowerEl.textContent="0%";sageWrap.classList.remove("show");
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");
   startChargeSound();
 }
 function updateCharge(){
@@ -255,8 +255,7 @@ function updateCharge(){
   chargeLevel=Math.min(5,Math.floor(chargeSeconds/2));
   meterFill.style.width=Math.min(100,chargeSeconds*10)+"%";
   chargeTimeEl.textContent=chargeSeconds.toFixed(1)+" 秒";
-  chargePowerEl.textContent=Math.round(chargeSeconds*10)+"%";
-  chargeText.textContent=chargeSeconds>=10?"MAX CHARGE! 100%":"チャージ中 "+Math.round(chargeSeconds*10)+"%";
+  chargeText.textContent=chargeSeconds>=10?"MAX CHARGE!":"チャージ中 "+chargeLevel+"/5";
 
   const next=chargeSeconds<4?-1:chargeSeconds<6?0:chargeSeconds<8?1:chargeSeconds<10?2:3;
   if(next!==sageStage){
@@ -296,10 +295,10 @@ function gameLogic(r){
       const q=(a[0].size+a[1].size)/2;
       if(chargeSeconds>=1&&hold(q/pulled>1.48,180)){
         const power=Math.max(.2,Math.min(1,Math.ceil(chargeSeconds/2)/5));
-        state=5;updateHUD();stopChargeSound();sageWrap.classList.remove("show");
+        state=5;updateHUD();stopChargeSound();sageWrap.classList.add("show");
         score+=Math.round(power*100);document.getElementById("score").textContent="スコア: "+score;
         shout.classList.add("show");speak("ぱっしゃあああ。じゃああああ。");
-        blastSound(power);startBlast(a,power);
+        blastSound(power);startTravelBlast(a,power);
       }
     }else hold(false,1);
   }
@@ -321,66 +320,281 @@ function lightning(x,y,r,alpha){
 function drawChargeFX(){
   if(state!==3||!last)return;
   const a=handData(last);if(a.length<2)return;
-  const q=midpoint(a),t=performance.now()/1000;
-  const power=Math.max(0,Math.min(1,chargeSeconds/10));
-  const d=devicePixelRatio||1;
-
-  // 秒数に比例して本体を大きくする。10秒で開始時の約4倍。
-  const base=24*d;
-  const pulse=(4+12*power)*Math.sin(t*(5+power*7))*d;
-  const coreR=base+(92*d*power)+pulse;
-  const auraR=coreR*(1.8+1.4*power);
-
-  f.save();
-  f.globalCompositeOperation="lighter";
-
-  const aura=f.createRadialGradient(q.x,q.y,0,q.x,q.y,auraR);
-  aura.addColorStop(0,"rgba(255,255,255,.98)");
-  aura.addColorStop(.10,"rgba(255,246,125,.95)");
-  aura.addColorStop(.28,"rgba(255,145,35,.88)");
-  aura.addColorStop(.52,"rgba(255,70,170,.55)");
-  aura.addColorStop(.76,"rgba(100,75,255,.30)");
-  aura.addColorStop(1,"rgba(25,45,255,0)");
-  f.fillStyle=aura;f.beginPath();f.arc(q.x,q.y,auraR,0,Math.PI*2);f.fill();
-
-  const core=f.createRadialGradient(q.x,q.y,0,q.x,q.y,coreR);
-  core.addColorStop(0,"#ffffff");core.addColorStop(.28,"#fff7a0");
-  core.addColorStop(.58,"#ff9a2f");core.addColorStop(.82,"rgba(255,65,130,.82)");
-  core.addColorStop(1,"rgba(110,45,255,0)");
-  f.fillStyle=core;f.beginPath();f.arc(q.x,q.y,coreR,0,Math.PI*2);f.fill();
-
-  // 2秒ごとにリングを増やす（最大5本）。
-  const rings=Math.max(1,Math.ceil(chargeSeconds/2));
-  for(let i=0;i<rings;i++){
-    const rr=coreR*(1.18+i*.28)+(Math.sin(t*4+i)*6*d);
-    f.globalAlpha=.25+.55*power;
-    f.strokeStyle=i%2===0?"#fff29b":"#b97aff";
-    f.lineWidth=(2+4*power)*d;
-    f.beginPath();f.arc(q.x,q.y,rr,0,Math.PI*2);f.stroke();
-  }
-
-  // パワーが増えるほど光粒子を増やす。
-  const particles=8+Math.floor(power*34);
-  for(let i=0;i<particles;i++){
-    const ang=(i/particles)*Math.PI*2+t*(.8+power*1.8)+(i%3)*.7;
-    const orbit=coreR*(1.35+((i*37)%100)/100*(1.3+power));
-    const px=q.x+Math.cos(ang)*orbit,py=q.y+Math.sin(ang)*orbit*.72;
-    const pr=(1.5+power*4+((i*13)%3))*d;
-    f.globalAlpha=.35+.55*power;
-    f.fillStyle=i%3===0?"#ffffff":i%3===1?"#ffb33b":"#a56cff";
-    f.beginPath();f.arc(px,py,pr,0,Math.PI*2);f.fill();
-  }
-
-  lightning(q.x,q.y,auraR*(1+.45*power),.28+.68*power);
-
-  // 8秒以降は白熱して最大チャージ感を出す。
-  if(chargeSeconds>=8){
-    f.globalAlpha=.15+.20*Math.abs(Math.sin(t*10));
-    f.fillStyle="#ffffff";
-    f.beginPath();f.arc(q.x,q.y,coreR*(1.05+.12*Math.sin(t*9)),0,Math.PI*2);f.fill();
-  }
+  const q=midpoint(a),t=performance.now()/1000,scale=.55+Math.max(1,Math.ceil(chargeSeconds/2))*.16;
+  const r=(34+chargeSeconds*3+12*Math.sin(t*6))*devicePixelRatio*scale;
+  const g=f.createRadialGradient(q.x,q.y,0,q.x,q.y,r*2.2);
+  g.addColorStop(0,"#fff");g.addColorStop(.16,"#fff17d");g.addColorStop(.34,"#ff9123");g.addColorStop(.58,"#ff4faa88");g.addColorStop(1,"#2020ff00");
+  f.save();f.globalCompositeOperation="lighter";f.fillStyle=g;f.beginPath();f.arc(q.x,q.y,r*2.2,0,Math.PI*2);f.fill();
+  lightning(q.x,q.y,r*2.7,.45+.35*chargeSeconds/10);
   f.restore();
 }
+
+function drawMikanLauncher(x,y,s=1){
+  const d=devicePixelRatio||1;
+  f.save();
+  f.translate(x,y);
+  f.scale(s*d,s*d);
+
+  // みかん君
+  f.shadowBlur=18;f.shadowColor="#ff9c28";
+  f.fillStyle="#ff941a";
+  f.beginPath();f.arc(0,0,32,0,Math.PI*2);f.fill();
+  f.shadowBlur=0;
+
+  // 葉っぱ
+  f.fillStyle="#63c84c";
+  f.beginPath();f.ellipse(-5,-35,12,6,-.45,0,Math.PI*2);f.fill();
+  f.beginPath();f.ellipse(8,-37,12,6,.35,0,Math.PI*2);f.fill();
+
+  // 顔
+  f.fillStyle="#3c2600";
+  f.beginPath();f.arc(-10,-5,3.2,0,Math.PI*2);f.arc(10,-5,3.2,0,Math.PI*2);f.fill();
+  f.strokeStyle="#3c2600";f.lineWidth=2;
+  f.beginPath();f.arc(0,6,9,.15*Math.PI,.85*Math.PI);f.stroke();
+
+  // 右→左へ構える腕
+  f.strokeStyle="#ffd0a5";f.lineWidth=8;f.lineCap="round";
+  f.beginPath();f.moveTo(-23,12);f.lineTo(-52,2);f.lineTo(-72,0);f.stroke();
+  f.restore();
+}
+
+function startTravelBlast(a,power){
+  blastBusy=true;
+  const d=devicePixelRatio||1;
+  const t0=performance.now();
+  const pwr=Math.max(.2,Math.min(1,power));
+
+  // 発射元は画面右のみかん君、着弾は画面左。
+  const startX=F.width*.82;
+  const startY=F.height*.50;
+  const endX=F.width*.18;
+  const endY=F.height*.50;
+
+  // 前より明確に見えるよう、約2.4秒かけて移動。
+  const total=2400;
+  const bubbles=[];
+
+  function ease(t){return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2}
+
+  function addBubble(x,y,amount,progress){
+    for(let i=0;i<amount;i++){
+      const ang=Math.random()*Math.PI*2;
+      const sp=(.4+Math.random()*1.8)*d;
+      bubbles.push({
+        x:x+(Math.random()-.5)*18*d,
+        y:y+(Math.random()-.5)*18*d,
+        vx:Math.cos(ang)*sp,
+        vy:Math.sin(ang)*sp,
+        r:(1.5+Math.random()*(3+7*progress))*d,
+        life:1
+      });
+    }
+  }
+
+  function frame(now){
+    const elapsed=now-t0;
+    const p=Math.min(1,elapsed/total);
+
+    f.clearRect(0,0,F.width,F.height);
+    f.save();
+    f.globalCompositeOperation="lighter";
+
+    // みかん君は発射中ずっと右側に表示。
+    f.globalCompositeOperation="source-over";
+    drawMikanLauncher(startX+48*d,startY,0.9);
+    f.globalCompositeOperation="lighter";
+
+    let move=0, swell=0, holdBurst=false;
+
+    // 0～18%: みかん君の前でエネルギーを作る
+    if(p<.18){
+      move=0;
+      swell=p/.18*.20;
+    }
+    // 18～82%: 右→左へはっきり移動しながら膨らむ
+    else if(p<.82){
+      const q=(p-.18)/.64;
+      move=ease(q);
+      swell=.20+.68*q;
+    }
+    // 82～100%: 左側でさらに膨らみ、炭酸が弾ける寸前に震える
+    else{
+      move=1;
+      const q=(p-.82)/.18;
+      swell=.88+.12*q;
+      holdBurst=true;
+    }
+
+    const x=startX+(endX-startX)*move;
+    const y=startY+(endY-startY)*move + Math.sin(move*Math.PI*4)*8*d*(1-move);
+    const wobble=holdBurst ? Math.sin(now/22)*7*d*(p-.82)/.18 : 0;
+
+    // 球は時間とともに大きくなる
+    const coreR=(18+92*swell)*d + Math.sin(now/50)*(3+9*swell)*d;
+    const auraR=coreR*(1.7+1.0*swell);
+
+    // 右→左へ流れる光の帯
+    if(move>0){
+      const grad=f.createLinearGradient(startX,startY,x+wobble,y);
+      grad.addColorStop(0,"rgba(80,120,255,0)");
+      grad.addColorStop(.25,"rgba(75,170,255,.32)");
+      grad.addColorStop(.72,"rgba(100,220,255,.72)");
+      grad.addColorStop(1,"rgba(255,255,255,.98)");
+      f.strokeStyle=grad;
+      f.lineWidth=(9+24*swell)*d;
+      f.lineCap="round";
+      f.beginPath();f.moveTo(startX,startY);f.lineTo(x+wobble,y);f.stroke();
+
+      // 細い高速ラインを重ね、移動方向を分かりやすくする
+      for(let k=0;k<5;k++){
+        f.globalAlpha=.22+.11*k;
+        f.strokeStyle=k%2?"#b9efff":"#78baff";
+        f.lineWidth=(1.5+k*.5)*d;
+        const yy=y+(k-2)*10*d;
+        f.beginPath();f.moveTo(startX,yy);f.lineTo(x+wobble,yy);f.stroke();
+      }
+      f.globalAlpha=1;
+    }
+
+    // 外側オーラ
+    const aura=f.createRadialGradient(x+wobble,y,0,x+wobble,y,auraR);
+    aura.addColorStop(0,"rgba(255,255,255,.99)");
+    aura.addColorStop(.12,"rgba(215,250,255,.96)");
+    aura.addColorStop(.30,"rgba(105,220,255,.92)");
+    aura.addColorStop(.55,"rgba(80,125,255,.55)");
+    aura.addColorStop(1,"rgba(50,60,255,0)");
+    f.fillStyle=aura;
+    f.beginPath();f.arc(x+wobble,y,auraR,0,Math.PI*2);f.fill();
+
+    // 白熱する中心
+    const core=f.createRadialGradient(x+wobble,y,0,x+wobble,y,coreR);
+    core.addColorStop(0,"#ffffff");
+    core.addColorStop(.25,"#eaffff");
+    core.addColorStop(.55,"#83e8ff");
+    core.addColorStop(.82,"rgba(82,120,255,.85)");
+    core.addColorStop(1,"rgba(80,50,255,0)");
+    f.fillStyle=core;
+    f.beginPath();f.arc(x+wobble,y,coreR,0,Math.PI*2);f.fill();
+
+    // 炭酸の泡が中で増える
+    const inner=8+Math.floor(34*swell);
+    f.lineWidth=1.5*d;
+    for(let i=0;i<inner;i++){
+      const ang=i*2.399+now/700*(1+(i%3)*.25);
+      const rr=coreR*(.15+((i*29)%100)/120);
+      const bx=x+wobble+Math.cos(ang)*rr;
+      const by=y+Math.sin(ang)*rr*.74;
+      const br=(1.3+4.5*swell+((i*7)%4))*d;
+      f.globalAlpha=.30+.58*swell;
+      f.strokeStyle=i%3===0?"#ffffff":"#bdefff";
+      f.beginPath();f.arc(bx,by,br,0,Math.PI*2);f.stroke();
+    }
+    f.globalAlpha=1;
+
+    // 周囲へ弾ける炭酸泡
+    if(Math.random()<.55)addBubble(x+wobble,y,2+Math.floor(3*swell),swell);
+    for(const b of bubbles){
+      if(b.life<=0)continue;
+      b.x+=b.vx;b.y+=b.vy;b.r*=1.018;b.life-=.020;
+      f.globalAlpha=Math.max(0,b.life)*(.35+.55*swell);
+      f.strokeStyle="#ddfaff";f.lineWidth=1.3*d;
+      f.beginPath();f.arc(b.x,b.y,b.r,0,Math.PI*2);f.stroke();
+    }
+    f.globalAlpha=1;
+
+    // 後半ほど稲妻と点滅を強化
+    if(swell>.45){
+      lightning(x+wobble,y,auraR*(1.08+.30*swell),.18+.72*swell);
+    }
+    if(holdBurst){
+      const q=(p-.82)/.18;
+      f.globalAlpha=.10+.32*Math.abs(Math.sin(now/25))*q;
+      f.fillStyle="#ffffff";
+      f.beginPath();f.arc(x+wobble,y,coreR*(1+.12*Math.sin(now/22)),0,Math.PI*2);f.fill();
+    }
+
+    f.restore();
+
+    if(p<1){
+      requestAnimationFrame(frame);
+    }else{
+      // 「膨らみ切る → 炭酸が一気にはじける」の順番を明確にする
+      setTimeout(()=>startSodaExplosion(endX,endY,pwr),120);
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+function startSodaExplosion(x,y,power){
+  const d=devicePixelRatio||1;
+  const t0=performance.now();
+  const droplets=[];
+  const count=70+Math.floor(95*power);
+
+  for(let i=0;i<count;i++){
+    const ang=Math.random()*Math.PI*2;
+    const sp=(2.2+Math.random()*(5.5+6*power))*d;
+    droplets.push({
+      x,y,
+      vx:Math.cos(ang)*sp,
+      vy:Math.sin(ang)*sp,
+      r:(1.5+Math.random()*4.5)*d,
+      life:1
+    });
+  }
+
+  function burst(now){
+    const t=(now-t0)/1000;
+    f.clearRect(0,0,F.width,F.height);
+    f.save();
+    f.globalCompositeOperation="lighter";
+
+    // 最初に白く「パシュッ」と弾ける
+    if(t<.12){
+      f.globalAlpha=(1-t/.12)*(.55+.30*power);
+      f.fillStyle="#ffffff";
+      f.fillRect(0,0,F.width,F.height);
+    }
+
+    // 爆発の中心リング
+    const prog=Math.min(1,t/.62);
+    const R=(30+Math.hypot(F.width,F.height)*(.22+.38*power)*prog);
+    f.globalAlpha=Math.max(0,1-t/.85);
+    f.strokeStyle="#dffcff";
+    f.lineWidth=(8-4*prog)*d;
+    f.beginPath();f.arc(x,y,R,0,Math.PI*2);f.stroke();
+
+    // 炭酸の泡・しぶき
+    for(const s of droplets){
+      if(s.life<=0)continue;
+      s.x+=s.vx;s.y+=s.vy;
+      s.vx*=.985;s.vy*=.985;
+      s.vy+=.018*d;
+      s.r*=1.01;
+      s.life-=.020;
+      f.globalAlpha=Math.max(0,s.life);
+      f.strokeStyle=Math.random()>.35?"#ffffff":"#8de9ff";
+      f.lineWidth=1.4*d;
+      f.beginPath();f.arc(s.x,s.y,s.r,0,Math.PI*2);f.stroke();
+    }
+
+    lightning(x,y,Math.min(R*1.08,Math.max(F.width,F.height)*.72),Math.max(0,1-t/1.1)*(.45+.55*power));
+    f.restore();
+
+    if(t<1.25){
+      requestAnimationFrame(burst);
+    }else{
+      f.clearRect(0,0,F.width,F.height);
+      shout.classList.remove("show");
+      sageWrap.classList.remove("show");
+      blastBusy=false;
+      startFireworks(power);
+    }
+  }
+  requestAnimationFrame(burst);
+}
+
 function startBlast(a,power){
   blastBusy=true;
   const q=midpoint(a),t0=performance.now(),maxR=Math.hypot(F.width,F.height)*(.22+.55*power);
@@ -422,7 +636,7 @@ function startFireworks(power){
 
 function resetGame(){
   state=0;stable=0;pulled=null;chargeStart=0;chargeSeconds=0;chargeLevel=0;sageStage=-1;maxReady=false;blastBusy=false;
-  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";chargePowerEl.textContent="0%";sageWrap.classList.remove("show");shout.classList.remove("show");stopChargeSound();updateHUD();
+  meterFill.style.width="0%";chargeTimeEl.textContent="0.0 秒";sageWrap.classList.remove("show");shout.classList.remove("show");stopChargeSound();updateHUD();
 }
 
 function onResults(r){last=r;gameLogic(r)}
